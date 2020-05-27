@@ -26,22 +26,12 @@
         cols="12"
       >
         <h2 class="headline font-weight-bold mb-3">
-          What's next?
+          Wanna get started?
         </h2>
-        <p class="subheading font-weight-regular">
-          Click on this ambiguous icon to go do stuffs:
-        </p>
 
-        <v-row justify="center">
-          <v-col cols="12">
-            <v-img 
-            :src="require('../assets/acme-dark.svg')"
-            class="my-3"
-            contain
-            height="300"
-            />
-          </v-col>
-        </v-row>
+        <div class="btn-div">
+          <v-btn @click="getStarted()" color="primary">Hell Yeah</v-btn>
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -50,22 +40,18 @@
 <script>
   export default {
     name: 'LandingPage',
-
+    props: {
+      getStartedParent: { type: Function },
+    },
+    
     data: () => ({
-      ecosystem: [
-        {
-          text: 'vuetify-loader',
-          href: 'https://github.com/vuetifyjs/vuetify-loader',
-        },
-        {
-          text: 'github',
-          href: 'https://github.com/vuetifyjs/vuetify',
-        },
-        {
-          text: 'awesome-vuetify',
-          href: 'https://github.com/vuetifyjs/awesome-vuetify',
-        },
-      ],
+
     }),
+    
+    methods: {
+      getStarted: function() {   
+        this.getStartedParent();
+      }
+    }
   }
 </script>

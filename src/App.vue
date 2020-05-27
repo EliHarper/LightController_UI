@@ -13,39 +13,53 @@
           contain
           transition="scale-transition"
           width="100"
+          @click="goHome()"
         />
       </div>
 
       <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
     </v-app-bar>
 
     <v-content>
-      <LandingPage/>
+      <component
+      v-bind:is="dynamicComponent"
+      class="tab"
+      :getStartedParent="getStarted">
+      </component>
     </v-content>
   </v-app>
 </template>
 
 <script>
 import LandingPage from './components/LandingPage';
+import Choose from './components/Choose';
+import Create from './components/Create';
+import Scene from './components/Scene.vue';
+
 
 export default {
   name: 'App',
 
   components: {
+    Create,
+    Choose,
     LandingPage,
+    Scene,
   },
 
-  data: () => ({
-    //
-  }),
+  data() {
+    return {
+      dynamicComponent: 'LandingPage'
+    }
+  },
+
+  methods: {
+    getStarted: function() {    
+      this.dynamicComponent = 'Choose'    
+    },
+    goHome: function() {
+      this.dynamicComponent = 'LandingPage'
+    }
+  }
 };
 </script>
