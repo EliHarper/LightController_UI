@@ -1,13 +1,8 @@
 <template>
   <div>
-    <v-dialog width="80vw" height="fit-content">
-      <v-card>
-        <h1>HI</h1>
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark v-on="on">Click Me</v-btn>
-        </template>
-        <form>
-          <!-- <v-text-field
+    <v-dialog v-model="dialog" width="80vw" height="fit-content">
+      <form>
+        <v-text-field
           v-model="name"
           label="Name"
           required
@@ -23,8 +18,7 @@
           <v-card-text>
             <v-row>
               <v-col class="pr-4">
-                <v-slider
-                  v-model="defaultBrightness"
+                <v-slider                  
                   class="align-center"
                   :max="100"
                   :min="0"
@@ -32,7 +26,7 @@
                 >
                   <template v-slot:append>
                     <v-text-field
-                      v-model="slider"
+                      v-model="defaultBrightness"
                       class="mt-0 pt-0"
                       hide-details
                       single-line
@@ -48,9 +42,8 @@
 
         <v-switch v-model="animated" label="Animated"></v-switch>
         <v-btn @click="createScene()" color="primary">create</v-btn>
-          <v-btn @click="cancel()" color="secondary">cancel</v-btn>-->
-        </form>
-      </v-card>
+        <v-btn @click="cancel()" color="secondary">cancel</v-btn>
+      </form>
     </v-dialog>
   </div>
 </template>

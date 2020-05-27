@@ -5,10 +5,11 @@
         v-for="scene in scenes"
         v-bind:key="scene.id"
         v-bind:title="scene.name"
-        :scene="scene"
-      ></Scene>
-      
-      <Create v-show="dialog" :dialog="dialog"></Create>      
+        :scene="scene"></Scene>
+
+       <Create 
+        v-show="dialog" 
+        :dialog="dialog"></Create>      
 
       <v-tooltip left>
         <template v-slot:activator="{ on }">
@@ -18,6 +19,7 @@
         </template>
         <span>Create scene</span>
       </v-tooltip>
+
 
       <!-- <v-footer fixed padless elevation="5"></v-footer> -->
     </div>
@@ -57,7 +59,7 @@ export default {
       scenes: null,
       fab: true,
       transition: "slide-y-transition",
-      dialog: false
+      dialog: false,
     };
   },
   mounted() {
