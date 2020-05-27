@@ -3,6 +3,9 @@
     <v-dialog width="80vw" height="fit-content">
       <v-card>
         <h1>HI</h1>
+        <template v-slot:activator="{ on }">
+          <v-btn color="primary" dark v-on="on">Click Me</v-btn>
+        </template>
         <form>
           <!-- <v-text-field
           v-model="name"
