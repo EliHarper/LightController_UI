@@ -1,16 +1,12 @@
 <template>
-  <div>
-    <v-dialog v-model="dialog" width="80vw" height="fit-content">
+  <v-dialog v-model="dialog" width="fit-content" height="fit-content" style="overflow: visible">
+    <div id="container">
       <form>
-        <v-text-field
-          v-model="name"
-          label="Name"
-          required
-          @input="$v.name.$touch()"
-          @blur="$v.name.$touch()"
-        ></v-text-field>
+        <v-text-field v-model="name" label="Name" required></v-text-field>
 
-        <v-color-picker v-model="colorCandidate"></v-color-picker>
+        <div class="picker">
+          <v-color-picker v-model="colorCandidate"></v-color-picker>
+        </div>
 
         <v-card flat color="transparent">
           <v-subheader>Default Brightness</v-subheader>
@@ -18,11 +14,12 @@
           <v-card-text>
             <v-row>
               <v-col class="pr-4">
-                <v-slider                  
+                <v-slider
                   class="align-center"
                   :max="100"
                   :min="0"
                   hide-details
+                  v-model="defaultBrightness"
                 >
                   <template v-slot:append>
                     <v-text-field
@@ -44,9 +41,29 @@
         <v-btn @click="createScene()" color="primary">create</v-btn>
         <v-btn @click="cancel()" color="secondary">cancel</v-btn>
       </form>
-    </v-dialog>
-  </div>
+    </div>
+  </v-dialog>
 </template>
+
+<style scoped>
+#container {
+  background-color: white;
+  padding: 5vh;
+  overflow: visible;
+}
+#container,
+#container > * {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: fit-content;
+  width: fit-content;
+}
+.picker {
+  display: flex;
+  justify-content: center;
+}
+</style>
 
 <script>
 export default {
@@ -65,24 +82,53 @@ export default {
 
   methods: {
     createScene() {
-      this.scene.name = this.name;
-      this.scene.colors = this.colorCandidate;
-      this.scene.defaultBrightness = this.defaultBrightness;
-      this.scene.functionCall = "solidColorFromHex";
+      this.assignToObj();
+
+      const formData = this.assignToFormData();
+
+      const axios = require("axios");
+      axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+      
+      axios
+        .post("http://192.168.1.117:5000/scene/create", formData)
+        .then(
+          /* response => (this.scenes = JSON.parse(JSON.stringify(response.data))) */
+          response => (console.log(response.data))
+        );
+
+      this.cancel();
+    },
+
+    assignToObj() {
+      this.scene = Object.assign({}, this.scene, {
+        name: this.name,
+        colors: [this.colorCandidate],
+        defaultBrightness: this.defaultBrightness,
+        animated: this.animated
+      });
 
       console.log(JSON.stringify(this.scene));
+    },
 
-      this.dialog = false;
+    assignToFormData() {
+      let formData = new FormData();
+
+      formData.append('name', this.scene.name);
+      formData.append('colors', this.scene.colors);
+      formData.append('defaultBrightness', this.scene.defaultBrightness);
+      formData.append('animated', this.scene.animated);
+
+      return formData;
     },
 
     cancel() {
-      this.$v.$reset();
-
       this.name = "";
       this.colorCandidate = "";
       this.animated = false;
       this.defaultBrightness = 50;
-      this.dialog = false;
+
+      let myDialog = false;
+      this.$emit("set-dialog", myDialog);
     }
   }
 };

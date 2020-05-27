@@ -9,7 +9,8 @@
 
        <Create 
         v-show="dialog" 
-        :dialog="dialog"></Create>      
+        :dialog="dialog"
+        @set-dialog="setDialog"></Create>      
 
       <v-tooltip left>
         <template v-slot:activator="{ on }">
@@ -75,7 +76,12 @@ export default {
     createScene() {
       this.dialog = true
       console.log("createScene")
-    }
+    },
+
+    setDialog(event, value) {
+      console.log("boolyyy");
+      this.dialog = value;
+    },
   }
 };
 </script>
