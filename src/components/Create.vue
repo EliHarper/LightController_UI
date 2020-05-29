@@ -38,8 +38,8 @@
         </v-card>
 
         <v-switch v-model="animated" label="Animated"></v-switch>
-        <v-btn @click="createScene()" color="primary">create</v-btn>
-        <v-btn @click="cancel()" color="secondary">cancel</v-btn>
+        <v-btn @click="createScene()" color="primary" class="createBtn">create</v-btn>
+        <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
       </form>
     </div>
   </v-dialog>
@@ -63,6 +63,10 @@
   display: flex;
   justify-content: center;
 }
+.createBtn,
+.cancelBtn {
+  margin: 5px;
+}
 </style>
 
 <script>
@@ -72,7 +76,7 @@ export default {
   props: ["dialog"],
 
   data: () => ({
-    scene: null,
+    scene: {},
     name: "",
     colors: [""],
     defaultBrightness: 50,
@@ -84,17 +88,22 @@ export default {
     createScene() {
       this.assignToObj();
 
-      const formData = this.assignToFormData();
-
       const axios = require("axios");
-      axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-      
-      axios
-        .post("http://192.168.1.117:5000/scene/create", formData)
-        .then(
-          /* response => (this.scenes = JSON.parse(JSON.stringify(response.data))) */
-          response => (console.log(response.data))
-        );
+      axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
+
+      const options = {
+        method: "post",
+        url: "http://192.168.1.117:5000/scene/create",
+        data: {
+          scene: this.scene
+        }
+      };
+
+      let newSceneId = "";
+      newSceneId = axios(options);
+
+      console.log("newSceneId:");
+      console.log(newSceneId);
 
       this.cancel();
     },
@@ -113,10 +122,10 @@ export default {
     assignToFormData() {
       let formData = new FormData();
 
-      formData.append('name', this.scene.name);
-      formData.append('colors', this.scene.colors);
-      formData.append('defaultBrightness', this.scene.defaultBrightness);
-      formData.append('animated', this.scene.animated);
+      formData.append("name", this.scene.name);
+      formData.append("colors", this.scene.colors);
+      formData.append("defaultBrightness", this.scene.defaultBrightness);
+      formData.append("animated", this.scene.animated);
 
       return formData;
     },

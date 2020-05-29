@@ -14,7 +14,7 @@
 
       <v-tooltip left>
         <template v-slot:activator="{ on }">
-          <v-btn @click="createScene()" v-on="on" fixed dark fab bottom right color="primary">
+          <v-btn @click="createScene()" v-on="on" fixed dark fab bottom right color="primary" elevation="5">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </template>
