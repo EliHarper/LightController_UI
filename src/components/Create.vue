@@ -17,7 +17,7 @@
                 <v-slider
                   class="align-center"
                   :max="100"
-                  :min="0"
+                  :min="1"
                   hide-details
                   v-model="defaultBrightness"
                 >
@@ -45,6 +45,7 @@
   </v-dialog>
 </template>
 
+
 <style scoped>
 #container {
   background-color: white;
@@ -69,7 +70,10 @@
 }
 </style>
 
+
 <script>
+import { postNewScene } from "@/api/index.js"
+
 export default {
   name: "Create",
 
@@ -87,47 +91,30 @@ export default {
   methods: {
     createScene() {
       this.assignToObj();
+      postNewScene(this.scene);
 
-      const axios = require("axios");
-      axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
-
-      const options = {
-        method: "post",
-        url: "http://192.168.1.117:5000/scene/create",
-        data: {
-          scene: this.scene
-        }
-      };
-
-      let newSceneId = "";
-      newSceneId = axios(options);
-
-      console.log("newSceneId:");
-      console.log(newSceneId);
+      this.$emit("load-scenes");
 
       this.cancel();
     },
 
     assignToObj() {
+      let functionCallVar = "";
+      if (this.animated) {
+        functionCallVar = "fadeBetween";
+      } else {
+        functionCallVar = "solidColorFromHex";
+      }
+
       this.scene = Object.assign({}, this.scene, {
         name: this.name,
         colors: [this.colorCandidate],
-        defaultBrightness: this.defaultBrightness,
+        defaultBrightness: (this.defaultBrightness/100) * 255,
+        functionCall: functionCallVar,
         animated: this.animated
       });
 
       console.log(JSON.stringify(this.scene));
-    },
-
-    assignToFormData() {
-      let formData = new FormData();
-
-      formData.append("name", this.scene.name);
-      formData.append("colors", this.scene.colors);
-      formData.append("defaultBrightness", this.scene.defaultBrightness);
-      formData.append("animated", this.scene.animated);
-
-      return formData;
     },
 
     cancel() {
