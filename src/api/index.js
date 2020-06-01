@@ -1,9 +1,10 @@
 import axios from 'axios'
 
-const API_URL = 'http://192.168.1.117:5000/api'
+const API_URL = process.env.VUE_APP_API_URL + '/api'
 
 
-export function fetchScenes() {    
+export function fetchScenes() {
+    console.log(`Calling ${API_URL}/scenes`)
     return axios.get(`${API_URL}/scenes`);
 }
 
@@ -13,8 +14,7 @@ export function applyScene(id) {
 }
 
 export function postNewScene(scene) {
-    return axios.post(`${API_URL}/scene/create`, scene)
-    .then(response => (console.log(response.data)));
+    return axios.post(`${API_URL}/scene/create`, scene);
 }
 
 export function deleteScene(id) {

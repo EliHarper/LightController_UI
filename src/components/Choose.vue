@@ -9,7 +9,12 @@
         @load-scenes="loadScenes"
       ></Scene>
 
-      <Create v-show="dialog" :dialog="dialog" @set-dialog="setDialog"></Create>
+      <Create
+        v-show="dialog"
+        :dialog="dialog"
+        @set-dialog="setDialog"
+        @load-scenes="loadScenes">
+      </Create>
 
       <v-tooltip left>
         <template v-slot:activator="{ on }">
@@ -82,10 +87,13 @@ export default {
       this.dialog = true;
     },
 
-    loadScenes() {
+    loadScenes(event="", value="") {
       fetchScenes().then(response => {
         this.scenes = JSON.parse(JSON.stringify(response.data));
       });
+      console.log("loadScenes")
+      console.log(event)
+      console.log(value)
     },
 
     setDialog(event, value) {

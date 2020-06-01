@@ -91,9 +91,10 @@ export default {
   methods: {
     createScene() {
       this.assignToObj();
-      postNewScene(this.scene);
-
-      this.$emit("load-scenes");
+      postNewScene(this.scene).then(response => {
+        console.log(JSON.stringify(response.data));
+        this.$emit("load-scenes");
+      });
 
       this.cancel();
     },
