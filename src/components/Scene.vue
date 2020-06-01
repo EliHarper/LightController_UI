@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <transition name="fade">
-      <v-card v-if="show" id="v-card" :style="cardStyles" class="pa-0" elevation="5">
+      <v-card shaped v-if="show" id="v-card"
+              :style="cardStyles" class="pa-0 izClickable" elevation="6">
         <v-card-text id="v-card-text" class="pa-0">
           <div id="scene" @click="apply()">
             <h2>{{scene.name}}</h2>
@@ -12,9 +13,25 @@
             </ul>
           </div>
 
-          <v-card-actions id="icon-holder">
-            <v-icon @click="deleteIt()" large>delete</v-icon>
-          </v-card-actions>
+          <div class="icon-container">
+            <v-tooltip left>
+              <template v-slot:activator="{ on }">
+                <v-card-actions class="edit">
+                  <v-icon @click="editIt()" v-on="on" large>edit</v-icon>
+                </v-card-actions>
+              </template>
+              <span>Edit {{scene.name}}</span>
+            </v-tooltip>
+
+            <v-tooltip left>
+              <template v-slot:activator="{ on }">
+                <v-card-actions class="delete">
+                  <v-icon @click="deleteIt()" v-on="on" large>delete</v-icon>
+                </v-card-actions>
+              </template>
+              <span>Delete {{scene.name}}</span>
+            </v-tooltip>
+          </div>
         </v-card-text>
       </v-card>
     </transition>
@@ -27,6 +44,9 @@
 
 
 <style scoped>
+@import '../assets/css/style.css';
+
+
 .fade-leave-active {
   transition: opacity .5s;
 }
@@ -38,10 +58,10 @@ h2 {
   padding-bottom: 0.5em;
 }
 
-#icon-holder {
+.icon-container {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 #scene {
@@ -58,7 +78,7 @@ h2 {
   width: 100%;
   height: fit-content;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 </style>
 

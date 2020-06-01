@@ -5,7 +5,7 @@
       color="primary"
       dark
     >
-      <div class="d-flex align-center">
+      <div class="d-flex align-center izClickable">
         <v-img
           :src="require('./assets/acme-light.svg')"
           alt="Lights Logo"
@@ -29,6 +29,10 @@
     </v-content>
   </v-app>
 </template>
+
+<style>
+  @import 'assets/css/style.css';
+</style>
 
 <script>
 import LandingPage from './components/LandingPage';
