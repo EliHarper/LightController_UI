@@ -4,8 +4,7 @@
       <Scene
         v-for="scene in scenes"
         v-bind:key="scene.id"
-        v-bind:title="scene.name"
-        :scene="scene"
+        v-bind:scene.sync="scene"
         @load-scenes="loadScenes"
       ></Scene>
 
@@ -85,13 +84,10 @@ export default {
       this.dialog = true;
     },
 
-    loadScenes(event="", value="") {
+    loadScenes() {
       fetchScenes().then(response => {
         this.scenes = JSON.parse(JSON.stringify(response.data));
       });
-      console.log("loadScenes")
-      console.log(event)
-      console.log(value)
     },
 
     setDialog(event, value) {

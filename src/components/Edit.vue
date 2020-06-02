@@ -8,7 +8,7 @@
         <v-text-field v-model="scene.name" label="Name" required></v-text-field>
 
         <div class="picker">
-          <v-color-picker hide-mode-switch=true mode="hexa" v-model="colorCandidate"></v-color-picker>
+          <v-color-picker hide-mode-switch mode="hexa" v-model="colorCandidate"></v-color-picker>
         </div>
 
         <v-card flat color="transparent">
@@ -87,9 +87,18 @@ export default {
 
 
   data: () => ({
+    newAnimated: ""
   }),
 
   computed: {
+    colorCandidate: {
+      get: function() {
+        return this.scene.colors[0];
+      },
+      set: function(newColor) {
+        this.scene.colors = [newColor];
+      }
+    },
     defaultBrightnessPct: {
       get: function() {
         return this.$brightnessToDisplay(this.scene.defaultBrightness);
@@ -98,29 +107,51 @@ export default {
         this.scene.defaultBrightness = this.$brightnessToStore(newBrightness);
       }
     },
-    animated() {
-      return this.scene.functionCall == ANIMATED_FUNCTION;
-    },
-    colorCandidate() {
-      return this.scene.colors[0];
+    animated: {
+      get: function() {
+        return this.scene.functionCall === ANIMATED_FUNCTION;
+      },
+      set: function(val) {
+        this.scene.animated = val;
+        
+        console.log("setAnimated")
+        console.log(val)
+        console.log(this.scene.functionCall())
+      }
     }
   },
 
   methods: {
     submitEdits() {
-      this.assignToObj();
+      // Simultaneously compose the new scene object and update
+      //   the prop passed down from the parent:
+      this.$emit('update:scene', this.assignToObj());
 
       editScene(this.scene).then(response => {
-        if (response.status == SUCCESS) {
+        if (response.status === SUCCESS) {
           this.editSnackbar = true;
         }
       });
 
-      this.$emit("load-scenes");
       this.cancel();
     },
 
     assignToObj() {
+      let newScene = Object.assign({}, this.scene, {
+        name: this.scene.name,
+        colors: [this.colorCandidate],
+        defaultBrightness: (this.defaultBrightnessPct/100) * 255,
+        functionCall: this.findFunctionCall(),
+        animated: this.animated
+      });
+
+      console.log("Assigned to obj:")
+      console.log(JSON.stringify(newScene));
+
+      return newScene;
+    },
+
+    findFunctionCall() {
       let functionCallVar = "";
       if (this.animated) {
         functionCallVar = "fadeBetween";
@@ -128,21 +159,11 @@ export default {
         functionCallVar = "solidColorFromHex";
       }
 
-      this.scene = Object.assign({}, this.scene, {
-        name: this.scene.name,
-        colors: [this.colorCandidate],
-        defaultBrightness: (this.defaultBrightnessPct/100) * 255,
-        functionCall: functionCallVar,
-        animated: this.animated
-      });
-
-      console.log("Assigned to obj:")
-      console.log(JSON.stringify(this.scene));
+      return functionCallVar;
     },
 
     cancel() {
-      let myDialog = false;
-      this.$emit("set-dialog", myDialog);
+      this.$emit('update:dialog', false);
     }
   }
 };

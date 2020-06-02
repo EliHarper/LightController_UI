@@ -38,9 +38,8 @@
 
 
     <Edit
-      :dialog="editDialog"
-      :scene="scene"
-      @set-dialog="setDialog"
+      v-bind:dialog.sync="editDialog"
+      v-bind:scene.sync="scene"
       @load-scenes="loadScenes">
     </Edit>
 
@@ -150,11 +149,11 @@ export default {
 
     loadScenes() {
       this.$emit("load-scenes")
-    },
-
-    setDialog(event, value) {
-      this.editDialog = value;
     }
+
+    // setDialog(event, value) {
+    //   this.editDialog = value;
+    // }
   }
 };
 </script>
