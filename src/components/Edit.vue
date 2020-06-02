@@ -1,13 +1,14 @@
 <template>
   <v-dialog
-          fullscreen hide-overlay
-          v-model="dialog" width="fit-content" height="fit-content" style="overflow: visible">
+          fullscreen hide-overlay transition="slide-x-transition"
+          v-model="dialog" width="fit-content" height="fit-content"
+          style="overflow: visible">
     <div id="container">
       <form>
         <v-text-field v-model="scene.name" label="Name" required></v-text-field>
 
         <div class="picker">
-          <v-color-picker v-model="colorCandidate"></v-color-picker>
+          <v-color-picker hide-mode-switch=true mode="hexa" v-model="colorCandidate"></v-color-picker>
         </div>
 
         <v-card flat color="transparent">
