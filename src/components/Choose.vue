@@ -34,8 +34,6 @@
         </template>
         <span>Create scene</span>
       </v-tooltip>
-
-      <!-- <v-footer fixed padless elevation="5"></v-footer> -->
     </div>
   </v-container>
 </template>

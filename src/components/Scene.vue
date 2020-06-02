@@ -9,7 +9,7 @@
             <ul>
               <li>Colors: {{scene.colors}}</li>
               <li>Function Call: {{scene.functionCall}}</li>
-              <li>Default brightness: {{scene.defaultBrightness | brightnessPercent}}</li>
+              <li>Default brightness: {{scene.defaultBrightness | brightnessAsPercent }}</li>
             </ul>
           </div>
 
@@ -35,9 +35,22 @@
         </v-card-text>
       </v-card>
     </transition>
-    <v-snackbar :timeout="timeout" color="success" v-model="snackbar">
+
+
+    <Edit
+      :dialog="editDialog"
+      :scene="scene"
+      @set-dialog="setDialog"
+      @load-scenes="loadScenes">
+    </Edit>
+
+    <v-snackbar :timeout="timeout" color="success" v-model="deleteSnackbar">
       Successfully deleted {{ scene.name }}
-      <v-btn dark flat @click.native="snackbar = false">Close</v-btn>
+      <v-btn dark flat @click.native="deleteSnackbar = false">Close</v-btn>
+    </v-snackbar>
+    <v-snackbar :timeout="timeout" color="success" v-model="editSnackbar">
+      Successfully updated {{ scene.name }}
+      <v-btn dark flat @click.native="editSnackbar = false">Close</v-btn>
     </v-snackbar>
   </v-container>
 </template>
@@ -84,25 +97,28 @@ h2 {
 
 
 <script>
-import { deleteScene, applyScene } from "@/api/index.js";
+import { applyScene, deleteScene } from "@/api/index.js";
+import Edit from "./Edit";
+
+const SUCCESS = 200;
 
 export default {
   name: "Scene",
+
+  components: {
+    Edit
+  },
 
   props: ["scene"],
 
   data: () => {
     return {
-      snackbar: false,
+      deleteSnackbar: false,
+      editSnackbar: false,
       timeout: 2000,
-      show: true
+      show: true,
+      editDialog: false
     };
-  },
-
-  filters: {
-    brightnessPercent(val) {
-      return ((val / 255) * 100).toFixed() + "%";
-    }
   },
 
   computed: {
@@ -121,11 +137,23 @@ export default {
 
     deleteIt() {
       deleteScene(this.scene._id.$oid).then(response => {
-        if (response.data == "done") {
-          this.snackbar = true;
+        if (response.data == SUCCESS) {
+          this.deleteSnackbar = true;
           this.show = false;
         }
       });
+    },
+
+    editIt() {
+      this.editDialog = true;
+    },
+
+    loadScenes() {
+      this.$emit("load-scenes")
+    },
+
+    setDialog(event, value) {
+      this.editDialog = value;
     }
   }
 };

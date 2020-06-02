@@ -17,7 +17,7 @@
         </h1>
 
         <p class="subheading font-weight-regular">
-          Have fun messing around with our lights lol
+          Have fun messing around with my Raspberry Pi powered lights!
         </p>
       </v-col>
 
