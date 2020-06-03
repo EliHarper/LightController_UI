@@ -1,11 +1,16 @@
 <template>
   <v-dialog
-          fullscreen hide-overlay transition="slide-x-transition"
-          v-model="dialog" width="fit-content" height="fit-content"
-          style="overflow: visible">
+    fullscreen
+    hide-overlay
+    transition="slide-x-transition"
+    v-model="dialog"
+    width="fit-content"
+    height="fit-content"
+    style="overflow: visible"
+  >
     <div id="container">
       <form>
-        <v-text-field v-model="scene.name" label="Name" required></v-text-field>
+        <v-text-field v-model="tmpScene.name" label="Name" required></v-text-field>
 
         <div class="picker">
           <v-color-picker hide-mode-switch mode="hexa" v-model="colorCandidate"></v-color-picker>
@@ -77,7 +82,6 @@
 <script>
 import { editScene } from "@/api/index.js";
 
-
 const SUCCESS = 200;
 const ANIMATED_FUNCTION = "fadeBetween";
 
@@ -85,9 +89,7 @@ export default {
   name: "Edit",
   props: ["dialog", "scene"],
 
-
   data: () => ({
-    newAnimated: ""
   }),
 
   computed: {
@@ -113,19 +115,23 @@ export default {
       },
       set: function(val) {
         this.scene.animated = val;
-        
-        console.log("setAnimated")
-        console.log(val)
-        console.log(this.scene.functionCall())
+
+        console.log("setAnimated");
+        console.log(val);
+        console.log(this.scene.functionCall());
       }
     }
+  },
+
+  created: function() {
+    this.tmpScene = Object.assign({}, this.scene);    
   },
 
   methods: {
     submitEdits() {
       // Simultaneously compose the new scene object and update
       //   the prop passed down from the parent:
-      this.$emit('update:scene', this.assignToObj());
+      this.$emit("update:scene", this.tmpScene);
 
       editScene(this.scene).then(response => {
         if (response.status === SUCCESS) {
@@ -136,20 +142,20 @@ export default {
       this.cancel();
     },
 
-    assignToObj() {
+/*     assignToObj() {
       let newScene = Object.assign({}, this.scene, {
         name: this.scene.name,
         colors: [this.colorCandidate],
-        defaultBrightness: (this.defaultBrightnessPct/100) * 255,
+        defaultBrightness: (this.defaultBrightnessPct / 100) * 255,
         functionCall: this.findFunctionCall(),
         animated: this.animated
       });
 
-      console.log("Assigned to obj:")
+      console.log("Assigned to obj:");
       console.log(JSON.stringify(newScene));
 
       return newScene;
-    },
+    }, */
 
     findFunctionCall() {
       let functionCallVar = "";
@@ -163,7 +169,7 @@ export default {
     },
 
     cancel() {
-      this.$emit('update:dialog', false);
+      this.$emit("update:dialog", false);
     }
   }
 };

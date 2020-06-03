@@ -150,10 +150,6 @@ export default {
     loadScenes() {
       this.$emit("load-scenes")
     }
-
-    // setDialog(event, value) {
-    //   this.editDialog = value;
-    // }
-  }
+   }
 };
 </script>
