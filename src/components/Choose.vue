@@ -43,7 +43,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   width: 80vw;
 }
 
