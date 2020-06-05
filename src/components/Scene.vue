@@ -43,13 +43,16 @@
       @load-scenes="loadScenes">
     </Edit>
 
-    <v-snackbar :timeout="timeout" color="success" v-model="deleteSnackbar">
+    <v-snackbar 
+      v-model="deleteSnackbar"
+      color="success" 
+      :timeout="timeout">
       Successfully deleted {{ scene.name }}
-      <v-btn dark flat @click.native="deleteSnackbar = false">Close</v-btn>
+      <v-btn dark @click.native="deleteSnackbar = false">Close</v-btn>
     </v-snackbar>
     <v-snackbar :timeout="timeout" color="success" v-model="editSnackbar">
       Successfully updated {{ scene.name }}
-      <v-btn dark flat @click.native="editSnackbar = false">Close</v-btn>
+      <v-btn dark @click.native="editSnackbar = false">Close</v-btn>
     </v-snackbar>
   </v-container>
 </template>
@@ -136,9 +139,14 @@ export default {
 
     deleteIt() {
       deleteScene(this.scene._id.$oid).then(response => {
-        if (response.data == SUCCESS) {
+        console.log(response)
+        if (response.status == SUCCESS) {
+          console.log("response.status == SUCCESS");
           this.deleteSnackbar = true;
+          console.log(this.deleteSnackbar);
           this.show = false;
+          console.log(this.show);
+          this.loadScenes();
         }
       });
     },

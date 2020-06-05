@@ -5,6 +5,7 @@ import vuetify from './plugins/vuetify';
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 import brightnessPlugin from "./MyPlugins/brightnessPlugin";
+import Vuelidate from 'vuelidate';
 
 
 Vue.config.productionTip = false
@@ -16,6 +17,7 @@ Vue.filter('brightnessAsPercent', function (byteVal) {
 })
 
 Vue.use(brightnessPlugin)
+Vue.use(Vuelidate)
 
 
 new Vue({

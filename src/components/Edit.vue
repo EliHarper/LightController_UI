@@ -9,7 +9,7 @@
     style="overflow: visible"
   >
     <div id="container">
-      <form>
+      <v-form>
         <v-text-field v-model="tmpScene.name" label="Name" required></v-text-field>
 
         <div class="picker">
@@ -48,7 +48,7 @@
         <v-switch v-model="animated" label="Animated"></v-switch>
         <v-btn @click="submitEdits()" color="primary" class="saveBtn">save</v-btn>
         <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
-      </form>
+      </v-form>
     </div>
   </v-dialog>
 </template>
@@ -141,21 +141,6 @@ export default {
 
       this.cancel();
     },
-
-/*     assignToObj() {
-      let newScene = Object.assign({}, this.scene, {
-        name: this.scene.name,
-        colors: [this.colorCandidate],
-        defaultBrightness: (this.defaultBrightnessPct / 100) * 255,
-        functionCall: this.findFunctionCall(),
-        animated: this.animated
-      });
-
-      console.log("Assigned to obj:");
-      console.log(JSON.stringify(newScene));
-
-      return newScene;
-    }, */
 
     findFunctionCall() {
       let functionCallVar = "";

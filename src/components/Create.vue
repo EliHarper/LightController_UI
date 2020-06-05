@@ -1,24 +1,30 @@
 <template>
   <v-dialog v-model="dialog" width="fit-content" height="fit-content" style="overflow: visible">
     <div id="container">
-      <form>
-        <v-text-field v-model="name" label="Name" required></v-text-field>
-
+      <v-form>
+        <v-text-field
+          label="Name"
+          v-model="name"
+          :error-messages="nameErrors"
+          @input="$v.name.$touch()"
+          @blur="$v.name.$touch()"
+          required
+        ></v-text-field>
         <div class="picker">
-          <v-color-picker v-model="colorCandidate"></v-color-picker>
+          <v-color-picker mode="hexa" hide-mode-switch v-model="colorCandidate"></v-color-picker>
         </div>
 
         <v-card flat color="transparent">
           <v-subheader>Default Brightness</v-subheader>
 
-          <v-card-text>
+          <v-card-text class="align-center">
             <v-row>
               <v-col class="pr-4">
                 <v-slider
                   class="align-center"
+                  id="slider"
                   :max="100"
-                  :min="1"
-                  hide-details
+                  :min="1"                  
                   v-model="defaultBrightness"
                 >
                   <template v-slot:append>
@@ -38,21 +44,30 @@
         </v-card>
 
         <v-switch v-model="animated" label="Animated"></v-switch>
-        <v-btn @click="createScene()" color="primary" class="createBtn">create</v-btn>
+        <v-btn @click="createScene()"  color="primary" class="createBtn">create</v-btn>
         <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
-      </form>
+      </v-form>
     </div>
   </v-dialog>
 </template>
 
 
 <style scoped>
+.createBtn,
+.cancelBtn {
+  margin: 5px;
+}
+
+.createBtn {
+  margin: 5px;
+}
+
 #container {
   background-color: white;
   padding: 5vh;
   overflow: visible;
 }
-#container,
+
 #container > * {
   display: flex;
   flex: 1;
@@ -60,23 +75,21 @@
   height: fit-content;
   width: fit-content;
 }
+
 .picker {
   display: flex;
   justify-content: center;
 }
-.createBtn,
-.cancelBtn {
-  margin: 5px;
-}
+
 </style>
 
 
 <script>
-import { postNewScene } from "@/api/index.js"
+import { postNewScene } from "@/api/index.js";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "Create",
-
   props: ["dialog"],
 
   data: () => ({
@@ -88,9 +101,36 @@ export default {
     colorCandidate: ""
   }),
 
+  validations: {
+    name: {
+      required
+    }
+  },
+
+  computed: {
+    nameErrors() {
+      let errors = [];
+      if (!this.$v.name.$dirty) {
+        return errors;
+      }
+
+      !this.$v.name.required && errors.push("Name is required.");
+
+      return errors;
+    }
+  },
+
   methods: {
     createScene() {
+      console.log("createScene")
+      if (this.name.length === 0) {
+        console.log("name.length === 0")
+        this.$v.name.$touch();
+        return;
+      }
+
       this.assignToObj();
+      console.log('finna post')
       postNewScene(this.scene).then(response => {
         console.log(JSON.stringify(response.data));
         this.$emit("load-scenes");
@@ -110,7 +150,7 @@ export default {
       this.scene = Object.assign({}, this.scene, {
         name: this.name,
         colors: [this.colorCandidate],
-        defaultBrightness: (this.defaultBrightness/100) * 255,
+        defaultBrightness: (this.defaultBrightness / 100) * 255,
         functionCall: functionCallVar,
         animated: this.animated
       });
@@ -123,9 +163,11 @@ export default {
       this.colorCandidate = "";
       this.animated = false;
       this.defaultBrightness = 50;
+      /* Reset validation errors: */
+      this.$v.$reset()
 
-      let myDialog = false;
-      this.$emit("set-dialog", myDialog);
+      /* Close the dialog (Create modal) */
+      this.$emit("update:dialog", false);
     }
   }
 };

@@ -1,6 +1,8 @@
 <template>
   <v-container style="display: flex; justify-content: center;">
     <div id="container" class="pa-0">
+      <!-- v-bind:scene.sync="scene" makes it so the "Scene" component can 
+            update the scene variable we're passing here: -->
       <Scene
         v-for="scene in scenes"
         v-bind:key="scene.id"
@@ -10,8 +12,7 @@
 
       <Create
         v-show="dialog"
-        :dialog="dialog"
-        @set-dialog="setDialog"
+        v-bind:dialog.sync="dialog"        
         @load-scenes="loadScenes">
       </Create>
 
