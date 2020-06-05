@@ -1,54 +1,54 @@
 <template>
   <v-dialog
     fullscreen
-    hide-overlay
     transition="slide-x-transition"
     v-model="dialog"
-    width="fit-content"
-    height="fit-content"
-    style="overflow: visible"
+    height="100%"
   >
-    <div id="container">
-      <v-form>
-        <v-text-field v-model="tmpScene.name" label="Name" required></v-text-field>
+    <div id="full-page">
+      <div id="container">
+        <form>
+          <v-text-field v-model="tmpScene.name" label="Name" required></v-text-field>
 
-        <div class="picker">
-          <v-color-picker hide-mode-switch mode="hexa" v-model="colorCandidate"></v-color-picker>
-        </div>
+          <div class="picker">
+            <v-color-picker hide-mode-switch mode="hexa" v-model="colorCandidate"></v-color-picker>
+          </div>
 
-        <v-card flat color="transparent">
-          <v-subheader>Default Brightness</v-subheader>
+          <v-card flat color="transparent">
+            <v-subheader>Default Brightness</v-subheader>
 
-          <v-card-text>
-            <v-row>
-              <v-col class="pr-4">
-                <v-slider
-                  class="align-center"
-                  :max="100"
-                  :min="1"
-                  hide-details
-                  v-model="defaultBrightnessPct"
-                >
-                  <template v-slot:append>
-                    <v-text-field
-                      v-model="defaultBrightnessPct"
-                      class="mt-0 pt-0"
-                      hide-details
-                      single-line
-                      type="number"
-                      style="width: 60px"
-                    ></v-text-field>
-                  </template>
-                </v-slider>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+            <v-card-text>
+              <v-row>
+                <v-col class="pr-4">
+                  <v-slider
+                          class="align-center"
+                          :max="100"
+                          :min="1"
+                          hide-details
+                          v-model="defaultBrightnessPct"
+                  >
+                    <template v-slot:append>
+                      <v-text-field
+                              v-model="defaultBrightnessPct"
+                              class="mt-0 pt-0"
+                              hide-details
+                              single-line
+                              type="number"
+                              style="width: 60px"
+                      ></v-text-field>
+                    </template>
+                  </v-slider>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
 
-        <v-switch v-model="animated" label="Animated"></v-switch>
-        <v-btn @click="submitEdits()" color="primary" class="saveBtn">save</v-btn>
-        <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
-      </v-form>
+          <v-switch v-model="animated" label="Animated"></v-switch>
+          <v-btn @click="submitEdits()" color="primary" class="saveBtn">save</v-btn>
+          <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
+        </form>
+      </div>
+      <div id="dimmed" @click="cancel()"></div>
     </div>
   </v-dialog>
 </template>
@@ -63,10 +63,18 @@
 #container,
 #container > * {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  height: fit-content;
   width: fit-content;
+}
+#dimmed {
+  display: flex;
+  width: 100%;
+  background-color: rgb(33,33,33);
+  opacity: .46;
+}
+#full-page {
+  display: flex;
+  flex-direction: row;
 }
 .picker {
   display: flex;

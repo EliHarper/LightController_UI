@@ -36,11 +36,12 @@
       </v-card>
     </transition>
 
-
     <Edit
       v-bind:dialog.sync="editDialog"
       v-bind:scene.sync="scene"
-      @load-scenes="loadScenes">
+      @load-scenes="loadScenes"
+      class="Edit"
+    >
     </Edit>
 
     <v-snackbar 
@@ -61,12 +62,8 @@
 <style scoped>
 @import '../assets/css/style.css';
 
-
-.fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
+.Edit {
+  width: 100%;
 }
 
 h2 {
