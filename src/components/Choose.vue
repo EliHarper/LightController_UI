@@ -8,7 +8,16 @@
         v-bind:key="scene.id"
         v-bind:scene.sync="scene"
         @load-scenes="loadScenes"
+        @delete-item="deleteItem"
       ></Scene>
+
+      <v-snackbar 
+        v-model="deleteSnackbar"
+        color="success" 
+        :timeout="timeout">
+        Successfully deleted {{ deleted }}
+        <v-btn dark @click.native="deleteSnackbar = false">Close</v-btn>
+      </v-snackbar>
 
       <Create
         v-show="dialog"
@@ -57,7 +66,9 @@ v-btn {
 <script>
 import Scene from "./Scene";
 import Create from "./Create";
-import { fetchScenes } from "@/api/index.js";
+import { fetchScenes, deleteScene } from "@/api/index.js";
+
+const SUCCESS = 200;
 
 export default {
   name: "Choose",
@@ -69,10 +80,13 @@ export default {
 
   data: () => {
     return {
-      scenes: {},
+      deleteSnackbar: false,
+      deleted: "",  
+      dialog: false,
       fab: true,
-      transition: "slide-y-transition",
-      dialog: false
+      scenes: {},
+      timeout: 2000,
+      transition: "slide-y-transition"
     };
   },
 
@@ -85,10 +99,23 @@ export default {
       this.dialog = true;
     },
 
+    deleteItem(scene) {
+      deleteScene(scene._id.$oid).then(response => {
+        console.log(response);
+        if (response.status == SUCCESS) {
+          this.scenes.splice(this.scenes.indexOf(scene), 1);
+          console.log("response.status == SUCCESS");
+          this.deleted = scene.name;
+          this.deleteSnackbar = true;
+        }
+      });
+    },
+
     loadScenes() {
+      console.log("Fetching: ")
       fetchScenes().then(response => {
         this.scenes = JSON.parse(JSON.stringify(response.data));
-      });
+      }).then(console.log(this.scenes));
     },
 
     setDialog(event, value) {

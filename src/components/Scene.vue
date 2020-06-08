@@ -44,13 +44,6 @@
     >
     </Edit>
 
-    <v-snackbar 
-      v-model="deleteSnackbar"
-      color="success" 
-      :timeout="timeout">
-      Successfully deleted {{ scene.name }}
-      <v-btn dark @click.native="deleteSnackbar = false">Close</v-btn>
-    </v-snackbar>
     <v-snackbar :timeout="timeout" color="success" v-model="editSnackbar">
       Successfully updated {{ scene.name }}
       <v-btn dark @click.native="editSnackbar = false">Close</v-btn>
@@ -96,10 +89,9 @@ h2 {
 
 
 <script>
-import { applyScene, deleteScene } from "@/api/index.js";
+import { applyScene } from "@/api/index.js";
 import Edit from "./Edit";
 
-const SUCCESS = 200;
 
 export default {
   name: "Scene",
@@ -111,8 +103,7 @@ export default {
   props: ["scene"],
 
   data: () => {
-    return {
-      deleteSnackbar: false,
+    return {      
       editSnackbar: false,
       timeout: 2000,
       show: true,
@@ -135,17 +126,7 @@ export default {
     },
 
     deleteIt() {
-      deleteScene(this.scene._id.$oid).then(response => {
-        console.log(response)
-        if (response.status == SUCCESS) {
-          console.log("response.status == SUCCESS");
-          this.deleteSnackbar = true;
-          console.log(this.deleteSnackbar);
-          this.show = false;
-          console.log(this.show);
-          this.loadScenes();
-        }
-      });
+      this.$emit("delete-item", this.scene);
     },
 
     editIt() {
