@@ -11,7 +11,22 @@
           required
         ></v-text-field>
         <div class="picker">
-          <v-color-picker mode="hexa" hide-mode-switch v-model="colorCandidate"></v-color-picker>
+          <v-color-picker mode="hexa" hide-mode-switch hide-inputs v-model="colorCandidate"></v-color-picker>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                @click="addCandidate()"                
+                dark
+                v-on="on"
+                fab
+                small
+                color="secondary"
+                elevation="5">
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </template>
+            <span>Add color to pallette</span>
+          </v-tooltip>
         </div>
 
         <v-card flat color="transparent">
@@ -78,6 +93,7 @@
 
 .picker {
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 
