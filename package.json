@@ -12,6 +12,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "roboto-fontface": "*",
+    "v-click-outside": "^3.0.1",
     "vue": "^2.6.11",
     "vuelidate": "^0.7.5",
     "vuetify": "^2.2.11"

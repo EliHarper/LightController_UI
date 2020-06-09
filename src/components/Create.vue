@@ -12,10 +12,23 @@
         ></v-text-field>
         <div class="picker">
           <v-color-picker mode="hexa" hide-mode-switch hide-inputs v-model="colorCandidate"></v-color-picker>
+
+          <div class="chips">
+            <v-subheader>Scene Pallette:</v-subheader>
+            <v-chip
+              v-for="(chipColor, index) in colors"
+              v-bind:key="index"
+              close
+              @click:close="removeColor(index)"
+              ripple
+              :color="chipColor"
+            ></v-chip>
+          </div>
+          
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ on }">              
               <v-btn
-                @click="addCandidate()"                
+                @click="addCandidate()"
                 dark
                 v-on="on"
                 fab
@@ -30,7 +43,7 @@
         </div>
 
         <v-card flat color="transparent">
-          <v-subheader>Default Brightness</v-subheader>
+          <v-subheader>Default Brightness:</v-subheader>
 
           <v-card-text class="align-center">
             <v-row>
@@ -94,10 +107,11 @@
 .picker {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
 }
 
 </style>
+
 
 
 <script>
@@ -133,26 +147,13 @@ export default {
       !this.$v.name.required && errors.push("Name is required.");
 
       return errors;
-    }
+    },
   },
 
   methods: {
-    createScene() {
-      console.log("createScene")
-      if (this.name.length === 0) {
-        console.log("name.length === 0")
-        this.$v.name.$touch();
-        return;
-      }
-
-      this.assignToObj();
-      console.log('finna post')
-      postNewScene(this.scene).then(response => {
-        console.log(JSON.stringify(response.data));
-        this.$emit("load-scenes");
-      });
-
-      this.cancel();
+    addCandidate() {
+      this.colors.push(this.colorCandidate);
+      this.colorCandidate.$reset;
     },
 
     assignToObj() {
@@ -184,6 +185,28 @@ export default {
 
       /* Close the dialog (Create modal) */
       this.$emit("update:dialog", false);
+    },
+
+    createScene() {
+      console.log("createScene")
+      if (this.name.length === 0) {
+        console.log("name.length === 0")
+        this.$v.name.$touch();
+        return;
+      }
+
+      this.assignToObj();
+      console.log('finna post')
+      postNewScene(this.scene).then(response => {
+        console.log(JSON.stringify(response.data));
+        this.$emit("load-scenes");
+      });
+
+      this.cancel();
+    },
+
+    removeColor(colorIndex) {
+      this.colors.splice(colorIndex, 1);
     }
   }
 };

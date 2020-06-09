@@ -21,14 +21,14 @@
 
       <Create
         v-show="dialog"
-        v-bind:dialog.sync="dialog"        
+        v-bind:dialog.sync="dialog"  
         @load-scenes="loadScenes">
       </Create>
 
       <v-tooltip left>
         <template v-slot:activator="{ on }">
           <v-btn
-            @click="createScene()"
+            @click.stop="createScene()"
             v-on="on"
             fixed
             dark

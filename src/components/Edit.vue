@@ -3,23 +3,24 @@
     fullscreen
     transition="slide-x-transition"
     v-model="dialog"
-    height="100%"
-  >
+    height="100%">
     <div id="full-page">
       <div id="container">
         <form>
-          <v-text-field v-model="tmpScene.name" label="Name" required></v-text-field>
+          <div id="name-field">
+            <v-text-field v-model="tmpScene.name" label="Name" required></v-text-field>                      
+          </div>
 
           <div class="picker">
             <v-color-picker hide-mode-switch mode="hexa" v-model="colorCandidate"></v-color-picker>
           </div>
 
-          <v-card flat color="transparent">
-            <v-subheader>Default Brightness</v-subheader>
+          <v-card class="brightness-card" flat color="transparent">
+            <v-subheader class="pa-0">Default Brightness</v-subheader>
 
-            <v-card-text>
+            <v-card-text class="pa-0" label="Default Brightness">
               <v-row>
-                <v-col class="pr-4">
+                <v-col class="pa-0">
                   <v-slider
                           class="align-center"
                           :max="100"
@@ -44,8 +45,10 @@
           </v-card>
 
           <v-switch v-model="animated" label="Animated"></v-switch>
-          <v-btn @click="submitEdits()" color="primary" class="saveBtn">save</v-btn>
-          <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
+          <div class="buttons">
+            <v-btn @click="submitEdits()" color="primary" class="saveBtn">save</v-btn>
+            <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>                      
+          </div>
         </form>
       </div>
       <div id="dimmed" @click="cancel()"></div>
@@ -55,10 +58,22 @@
 
 
 <style scoped>
+.buttons, .brightness-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
 #container {
   background-color: white;
   padding: 5vh;
+  align-items: stretch;
+}
+#container #dimmed {
   overflow: visible;
+}
+#container form {
+  height: 100%;
+  justify-content: space-evenly;
 }
 #container,
 #container > * {
@@ -69,12 +84,15 @@
 #dimmed {
   display: flex;
   width: 100%;
+  flex: 1 1 auto;
   background-color: rgb(33,33,33);
   opacity: .46;
 }
 #full-page {
   display: flex;
   flex-direction: row;
+  align-items: stretch;
+  height: 100%;
 }
 .picker {
   display: flex;
@@ -83,6 +101,9 @@
 .saveBtn,
 .cancelBtn {
   margin: 5px;
+}
+#name-field {
+  height: 100;
 }
 </style>
 
