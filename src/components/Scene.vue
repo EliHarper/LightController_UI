@@ -1,8 +1,14 @@
 <template>
   <v-container>
     <transition name="fade">
-      <v-card shaped v-if="show" id="v-card"
-              :style="cardStyles" class="pa-0 izClickable" elevation="6">
+      <v-card
+        shaped
+        v-if="show"
+        id="v-card"
+        :style="cardStyles"
+        class="pa-0 izClickable"
+        elevation="6"
+      >
         <v-card-text id="v-card-text" class="pa-0">
           <div id="scene" @click="apply()">
             <h2>{{scene.name}}</h2>
@@ -42,8 +48,7 @@
       :key="editKey"
       @load-scenes="loadScenes"
       class="Edit"
-    >
-    </Edit>
+    ></Edit>
 
     <v-snackbar :timeout="timeout" color="success" v-model="editSnackbar">
       Successfully updated {{ scene.name }}
@@ -54,7 +59,7 @@
 
 
 <style scoped>
-@import '../assets/css/style.css';
+@import "../assets/css/style.css";
 
 .Edit {
   width: 100%;
@@ -93,7 +98,6 @@ h2 {
 import { applyScene } from "@/api/index.js";
 import Edit from "./Edit";
 
-
 export default {
   name: "Scene",
 
@@ -104,7 +108,7 @@ export default {
   props: ["scene"],
 
   data: () => {
-    return {      
+    return {
       editSnackbar: false,
       timeout: 2000,
       show: true,
@@ -117,6 +121,13 @@ export default {
 
   computed: {
     cardStyles() {
+      if (this.scene.colors.length > 1) {
+        let gradient = this.createGradient();
+
+        return {
+          "background-image": gradient
+        };
+      }
       return {
         "background-color": this.scene.colors[0]
       };
@@ -125,8 +136,21 @@ export default {
 
   methods: {
     apply() {
-      console.log(this.scene._id.$oid);
       applyScene(this.scene._id.$oid);
+    },
+
+    createGradient() {
+      var gradient = "linear-gradient(to right, ";
+      const lastIndex = this.scene.colors.length - 1;
+
+      this.scene.colors.forEach(async function(element, index) {
+        gradient += element;
+        if (index != lastIndex) {
+          gradient += ", ";
+        }
+      });
+
+      return gradient;
     },
 
     deleteIt() {
@@ -143,8 +167,8 @@ export default {
     },
 
     loadScenes() {
-      this.$emit("load-scenes")
+      this.$emit("load-scenes");
     }
-   }
+  }
 };
 </script>

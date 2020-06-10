@@ -38,7 +38,8 @@
 import LandingPage from './components/LandingPage';
 import Choose from './components/Choose';
 import Create from './components/Create';
-import Scene from './components/Scene.vue';
+import Scene from './components/Scene';
+import Pallette from './components/Pallette';
 
 
 export default {
@@ -48,6 +49,7 @@ export default {
     Create,
     Choose,
     LandingPage,
+    Pallette,
     Scene,
   },
 
