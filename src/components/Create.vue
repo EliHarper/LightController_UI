@@ -159,9 +159,9 @@ export default {
     assignToObj() {
       let functionCallVar = "";
       if (this.animated) {
-        functionCallVar = "fadeBetween";
+        functionCallVar = "fade_between";
       } else {
-        functionCallVar = "solidColorFromHex";
+        functionCallVar = "paint_with_colors";
       }
 
       this.scene = Object.assign({}, this.scene, {

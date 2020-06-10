@@ -109,10 +109,9 @@
 
 
 <script>
-import { editScene } from "@/api/index.js";
+import { editScene } from '@/api/index.js';
+import SceneProps from '@/scene-properties/index.js';
 
-const SUCCESS = 200;
-const ANIMATED_FUNCTION = "fadeBetween";
 
 export default {
   name: "Edit",
@@ -127,7 +126,7 @@ export default {
         return this.scene.colors[0];
       },
       set: function(newColor) {
-        this.scene.colors = [newColor];
+        this.tmpScene.colors = [newColor];
       }
     },
     defaultBrightnessPct: {
@@ -135,25 +134,28 @@ export default {
         return this.$brightnessToDisplay(this.scene.defaultBrightness);
       },
       set: function(newBrightness) {
-        this.scene.defaultBrightness = this.$brightnessToStore(newBrightness);
+        this.tmpScene.defaultBrightness = this.$brightnessToStore(newBrightness);
       }
     },
     animated: {
       get: function() {
-        return this.scene.functionCall === ANIMATED_FUNCTION;
+        return this.scene.functionCall == SceneProps.ANIMATED_FUNCTION;
       },
       set: function(val) {
-        this.scene.animated = val;
+        this.tmpScene.animated = val;
 
-        console.log("setAnimated");
-        console.log(val);
-        console.log(this.scene.functionCall());
+        if (val) {
+          this.tmpScene.functionCall = SceneProps.ANIMATED_FUNCTION;
+        } else {
+          this.tmpScene.functionCall = SceneProps.STATIC_FUNCTION;
+        }
       }
     }
   },
 
+  // Creates the tmpScene object when the Edit component loads; only overwrites on save
   created: function() {
-    this.tmpScene = Object.assign({}, this.scene);    
+    this.setTmpScene();
   },
 
   methods: {
@@ -162,8 +164,8 @@ export default {
       //   the prop passed down from the parent:
       this.$emit("update:scene", this.tmpScene);
 
-      editScene(this.scene).then(response => {
-        if (response.status === SUCCESS) {
+      editScene(this.tmpScene).then(response => {
+        if (response.status === SceneProps.SUCCESS) {
           this.editSnackbar = true;
         }
       });
@@ -171,19 +173,13 @@ export default {
       this.cancel();
     },
 
-    findFunctionCall() {
-      let functionCallVar = "";
-      if (this.animated) {
-        functionCallVar = "fadeBetween";
-      } else {
-        functionCallVar = "solidColorFromHex";
-      }
-
-      return functionCallVar;
+    cancel() {
+      this.setTmpScene();
+      this.$emit("update:dialog", false);
     },
 
-    cancel() {
-      this.$emit("update:dialog", false);
+    setTmpScene() {
+      this.tmpScene = Object.assign({}, this.scene);
     }
   }
 };

@@ -39,6 +39,7 @@
     <Edit
       v-bind:dialog.sync="editDialog"
       v-bind:scene.sync="scene"
+      :key="editKey"
       @load-scenes="loadScenes"
       class="Edit"
     >
@@ -107,6 +108,9 @@ export default {
       editSnackbar: false,
       timeout: 2000,
       show: true,
+      /* editKey allows a forced re-render when the drawer is reopened (so it
+          doesn't keep any unsaved changes) */
+      editKey: 0,
       editDialog: false
     };
   },
@@ -130,7 +134,12 @@ export default {
     },
 
     editIt() {
+      this.rerenderEdit();
       this.editDialog = true;
+    },
+
+    rerenderEdit() {
+      this.editKey += 1;
     },
 
     loadScenes() {

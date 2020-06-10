@@ -13,6 +13,8 @@ export function deleteScene(id) {
 }
 
 export function editScene(scene) {
+    console.log('editScene:')
+    console.log(scene)
     return axios.put(`${API_URL}/scene/edit`, scene)
 }
 
