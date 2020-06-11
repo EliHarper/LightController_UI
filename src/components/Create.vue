@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="fit-content" height="fit-content" style="overflow: visible">
+  <v-dialog v-model="dialog"  width="fit-content" height="fit-content" style="overflow: visible">
     <div id="container">
       <v-form>
         <v-text-field
@@ -72,7 +72,7 @@
 
 
 <style scoped>
-@import '../assets/css/style.css';
+@import "../assets/css/style.css";
 
 .createBtn,
 .cancelBtn {
@@ -97,8 +97,8 @@
   width: fit-content;
 }
 
-.v-color-picker__alpha {
-  display: none;
+.v-color-picker__sliders > .v-color-picker__alpha {
+  display: none !important;
 }
 </style>
 
@@ -111,7 +111,7 @@ import Pallette from "./Pallette";
 
 export default {
   name: "Create",
-  props: ["dialog"],  
+  props: ["dialog"],
 
   components: {
     Pallette
@@ -123,7 +123,8 @@ export default {
     colors: [],
     defaultBrightness: 50,
     animated: false,
-    colorCandidate: ""
+    colorCandidate: "",
+    palletteKey: 0,
   }),
 
   validations: {
@@ -199,6 +200,10 @@ export default {
 
       this.cancel();
     },
+
+    rerenderPallette() {
+      this.palletteKey += 1;
+    }
   }
 };
 </script>

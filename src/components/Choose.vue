@@ -21,7 +21,8 @@
 
       <Create
         v-show="dialog"
-        v-bind:dialog.sync="dialog"  
+        v-bind:dialog.sync="dialog"
+        :key="createKey"  
         @load-scenes="loadScenes">
       </Create>
 
@@ -67,8 +68,8 @@ v-btn {
 import Scene from "./Scene";
 import Create from "./Create";
 import { fetchScenes, deleteScene } from "@/api/index.js";
+import SceneProps from "../scene-properties/index";
 
-const SUCCESS = 200;
 
 export default {
   name: "Choose",
@@ -80,6 +81,8 @@ export default {
 
   data: () => {
     return {
+      createKey: 0,
+      palletteKey: 0,
       deleteSnackbar: false,
       deleted: "",  
       dialog: false,
@@ -96,13 +99,14 @@ export default {
 
   methods: {
     createScene() {
+      this.rerenderCreate();
       this.dialog = true;
     },
 
     deleteItem(scene) {
       deleteScene(scene._id.$oid).then(response => {
         console.log(response);
-        if (response.status == SUCCESS) {
+        if (response.status == SceneProps.SUCCESS) {
           this.scenes.splice(this.scenes.indexOf(scene), 1);
           console.log("response.status == SUCCESS");
           this.deleted = scene.name;
@@ -116,6 +120,10 @@ export default {
       fetchScenes().then(response => {
         this.scenes = JSON.parse(JSON.stringify(response.data));
       }).then(console.log(this.scenes));
+    },
+
+    rerenderCreate() {
+      this.createKey += 1;
     },
 
     setDialog(event, value) {
