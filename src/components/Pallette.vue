@@ -9,6 +9,7 @@
         @click:close="removeColor(index)"
         :color="chipColor"
         draggable
+        @dragend="updateOrder()"
         ripple
       ></v-chip>
     </draggable>
@@ -34,21 +35,19 @@ export default {
     draggable,
   },
 
-  data: () => ({
-      palletteColors: this.colors,
-  }),
-
-  watch: {
-      palletteColors() {
-          this.$emit("update:colors", this.palletteColors)
-      }
+  data: function () {
+    palletteColors: this.colors
   },
-
+  
   methods: {
     removeColor(index) {
-      let tmpColors = this.palletteColors;
+      let tmpColors = this.colors;
       tmpColors.splice(index, 1);
       this.$emit("update:colors", tmpColors);
+    },
+
+    updateOrder() {
+      this.$emit("update:colors", this.palletteColors);
     }
   }
 };
