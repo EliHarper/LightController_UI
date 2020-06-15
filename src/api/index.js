@@ -19,6 +19,10 @@ export function fetchScenes() {
     return axios.get(`${API_URL}/scenes`);
 }
 
+export function lightsOff() {
+    return axios.get(`${API_URL}/off`);
+}
+
 export function postNewScene(scene) {
     return axios.post(`${API_URL}/scene/create`, scene);
 }

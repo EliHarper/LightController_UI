@@ -7,6 +7,7 @@
         v-for="scene in scenes"
         v-bind:key="scene.id"
         v-bind:scene.sync="scene"
+        v-bind:activeScene.sync="activeScene"
         @load-scenes="loadScenes"
         @delete-item="deleteItem"
       ></Scene>
@@ -81,6 +82,7 @@ export default {
 
   data: () => {
     return {
+      activeScene: '',
       createKey: 0,
       palletteKey: 0,
       deleteSnackbar: false,

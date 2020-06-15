@@ -35,8 +35,12 @@ export default {
     draggable,
   },
 
-  data: function () {
-    palletteColors: this.colors
+  data: () => {
+    return {}
+  },
+
+  created: function() {
+    this.palletteColors = this.colors;
   },
   
   methods: {

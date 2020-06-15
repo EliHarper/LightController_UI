@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog"  width="fit-content" height="fit-content" style="overflow: visible">
+  <v-dialog v-model="dialog" width="fit-content" height="fit-content" style="overflow: visible">
     <div id="container">
       <v-form>
         <v-text-field
@@ -63,6 +63,9 @@
         </v-card>
 
         <v-switch v-model="animated" label="Animated"></v-switch>
+        <!-- <Animations v-model="scene.animation" v-if="animated" v-bind:scene="scene"></Animations> -->
+        <v-select :items="animationTypes" v-if="animated" v-model="scene.animation" label="Animation"></v-select>
+
         <v-btn @click="createScene()" color="primary" class="createBtn">create</v-btn>
         <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
       </v-form>
@@ -108,12 +111,14 @@
 import { postNewScene } from "@/api/index.js";
 import { required } from "vuelidate/lib/validators";
 import Pallette from "./Pallette";
+// import Animations from "./Animations";
 
 export default {
   name: "Create",
   props: ["dialog"],
 
   components: {
+    /* Animations,  */
     Pallette
   },
 
@@ -123,8 +128,10 @@ export default {
     colors: [],
     defaultBrightness: 50,
     animated: false,
+    animation: "",
+    animationTypes: ["Projectile", "Glow"], 
     colorCandidate: "",
-    palletteKey: 0,
+    palletteKey: 0
   }),
 
   validations: {
@@ -155,17 +162,21 @@ export default {
     assignToObj() {
       let functionCallVar = "";
       if (this.animated) {
-        functionCallVar = "fade_between";
+        functionCallVar = "animated";
       } else {
         functionCallVar = "paint_static_colors";
       }
+
+      console.log("this.animation");
+      console.log(this.animation);
 
       this.scene = Object.assign({}, this.scene, {
         name: this.name,
         colors: this.colors,
         defaultBrightness: (this.defaultBrightness / 100) * 255,
         functionCall: functionCallVar,
-        animated: this.animated
+        animated: this.animated,
+        animation: this.animation
       });
 
       console.log(JSON.stringify(this.scene));

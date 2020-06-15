@@ -49,6 +49,8 @@
                         class="mt-0 pt-0"
                         hide-details
                         single-line
+                        :max="100"
+                        :min="1"
                         type="number"
                         style="width: 60px"
                       ></v-text-field>
@@ -73,7 +75,7 @@
 
 
 <style scoped>
-@import '../assets/css/style.css';
+@import "../assets/css/style.css";
 
 .buttons,
 .brightness-card {
@@ -137,20 +139,16 @@ export default {
   },
 
   data: () => ({
-    colorCandidate: ""
+    colorCandidate: "",
+    defaultBrightnessPct: 0
   }),
 
   computed: {
-    defaultBrightnessPct: {
+    /* defaultBrightnessPct: {
       get: function() {
-        return this.$brightnessToDisplay(this.scene.defaultBrightness);
-      },
-      set: function(newBrightness) {
-        this.tmpScene.defaultBrightness = this.$brightnessToStore(
-          newBrightness
-        );
+        return this.$brightnessToDisplay(this.tmpScene.defaultBrightness);
       }
-    },
+    }, */
     animated: {
       get: function() {
         return this.scene.functionCall == SceneProps.ANIMATED_FUNCTION;
@@ -170,6 +168,7 @@ export default {
   // Creates the tmpScene object when the Edit component loads; only overwrites on save
   created: function() {
     this.revertTemps();
+    this.defaultBrightnessPct = this.$brightnessToDisplay(this.tmpScene.defaultBrightness);
   },
 
   methods: {
@@ -183,16 +182,21 @@ export default {
       this.$emit("update:dialog", false);
     },
 
+    //  Function to revert tmpScene in the event of re-render or cancel:
     revertTemps() {
       this.tmpScene = Object.assign({}, this.scene);
       this.colorCandidate = ""
     },
 
     submitEdits() {
-      // Simultaneously compose the new scene object and update
-      //   the prop passed down from the parent:
-      this.$emit("update:scene", this.tmpScene);
+      //  Convert the defaultBrightness property to stored form (so RPi doesn't have to)
+      this.tmpScene.defaultBrightness = 
+        this.$brightnessToStore(this.defaultBrightnessPct);
 
+      //   Update the prop passed down from the parent:
+      this.$emit("update:scene", this.tmpScene);      
+
+      //  Submit the edits to the API/Database:
       editScene(this.tmpScene).then(response => {
         if (response.status === SceneProps.SUCCESS) {
           this.editSnackbar = true;

@@ -15,8 +15,13 @@
             <ul>
               <li>Colors: {{scene.colors}}</li>
               <li>Function Call: {{scene.functionCall}}</li>
+              <li>Animation: {{scene.animation}}
               <li>Default brightness: {{scene.defaultBrightness | brightnessAsPercent }}</li>
             </ul>
+          </div>
+
+          <div v-if="isActive" class="off">
+            <v-btn @click="turnOff()">Turn off</v-btn>
           </div>
 
           <div class="icon-container">
@@ -75,6 +80,12 @@ h2 {
   justify-content: space-between;
 }
 
+.off {
+  display: flex;
+  align-items: flex-end;
+  top: -5px;
+}
+
 #scene {
   display: flex;
   flex: 1;
@@ -95,7 +106,7 @@ h2 {
 
 
 <script>
-import { applyScene } from "@/api/index.js";
+import { applyScene, lightsOff } from "@/api/index.js";
 import Edit from "./Edit";
 
 export default {
@@ -105,10 +116,13 @@ export default {
     Edit
   },
 
-  props: ["scene"],
+  props: [
+    "scene",
+    "activeScene"
+  ],
 
   data: () => {
-    return {
+    return {      
       editSnackbar: false,
       timeout: 2000,
       show: true,
@@ -131,12 +145,20 @@ export default {
       return {
         "background-color": this.scene.colors[0]
       };
+    },
+    isActive () {
+      if (this.activeScene == this.scene._id.$oid) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
 
   methods: {
     apply() {
-      applyScene(this.scene._id.$oid);
+      applyScene(this.scene._id.$oid);      
+      this.$emit('update:activeScene', this.scene._id.$oid);
     },
 
     createGradient() {
@@ -168,6 +190,11 @@ export default {
 
     loadScenes() {
       this.$emit("load-scenes");
+    },
+
+    turnOff() {
+      lightsOff(this.scene._id.$oid);
+      this.$emit('update:activeScene', '');
     }
   }
 };
