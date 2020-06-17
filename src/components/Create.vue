@@ -5,7 +5,7 @@
         <v-text-field
           label="Name"
           v-model="name"
-          :error-messages="nameErrors"
+          :error-messages="searchForErrors"
           @input="$v.name.$touch()"
           @blur="$v.name.$touch()"
           required
@@ -64,7 +64,6 @@
         </v-card>
 
         <v-switch v-model="animated" label="Animated"></v-switch>
-        <!-- <Animations v-model="scene.animation" v-if="animated" v-bind:scene="scene"></Animations> -->
         <v-select :items="animationTypes" v-if="animated" v-model="scene.animation" label="Animation"></v-select>
 
         <v-btn @click="createScene()" color="primary" class="createBtn">create</v-btn>
@@ -112,27 +111,27 @@
 import { postNewScene } from "@/api/index.js";
 import { required } from "vuelidate/lib/validators";
 import Pallette from "./Pallette";
-// import Animations from "./Animations";
+import SceneProps from "@/scene-properties/index.js";
+
 
 export default {
   name: "Create",
   props: ["dialog"],
 
   components: {
-    /* Animations,  */
     Pallette
   },
 
   data: () => ({
-    scene: {},
-    name: "",
-    colors: [],
+    scene:             {},
+    animated:          false,
+    animation:         "",
+    animationTypes:    SceneProps.ANIMATION_TYPES,
+    colorCandidate:    "",
+    colors:            [],
     defaultBrightness: 50,
-    animated: false,
-    animation: "",
-    animationTypes: ["Projectile", "Glow"], 
-    colorCandidate: "",
-    palletteKey: 0
+    name:              "",
+    palletteKey:       0
   }),
 
   validations: {
@@ -142,7 +141,7 @@ export default {
   },
 
   computed: {
-    nameErrors() {
+    searchForErrors() {
       let errors = [];
       if (!this.$v.name.$dirty) {
         return errors;
@@ -165,9 +164,9 @@ export default {
     assignToObj() {
       let functionCallVar = "";
       if (this.animated) {
-        functionCallVar = "animated";
+        functionCallVar = SceneProps.ANIMATED_FUNCTION;
       } else {
-        functionCallVar = "paint_static_colors";
+        functionCallVar = SceneProps.STATIC_FUNCTION;
       }
 
       console.log("this.animation");
@@ -189,6 +188,7 @@ export default {
       this.name = "";
       this.colorCandidate = "";
       this.animated = false;
+      this.animation = "";
       this.defaultBrightness = 50;
       /* Reset validation errors: */
       this.$v.$reset();
@@ -219,7 +219,8 @@ export default {
       this.palletteKey += 1;
     },
 
-    setColorCandidate(event, newCandidate) {
+    setColorCandidate(newCandidate) {
+      console.log(newCandidate)
       this.colorCandidate = newCandidate;
     }
   }

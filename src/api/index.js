@@ -20,6 +20,7 @@ export function fetchScenes() {
 }
 
 export function lightsOff() {
+    console.log('calling /off:')
     return axios.get(`${API_URL}/off`);
 }
 

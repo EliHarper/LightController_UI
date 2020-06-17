@@ -52,6 +52,7 @@
       v-bind:scene.sync="scene"
       :key="editKey"
       @load-scenes="loadScenes"
+      @set-scene="setScene"
       class="Edit"
     ></Edit>
 
@@ -193,8 +194,13 @@ export default {
     },
 
     turnOff() {
-      lightsOff(this.scene._id.$oid);
+      const res = lightsOff(this.scene._id.$oid);
+      console.log(res)
       this.$emit('update:activeScene', '');
+    },
+
+    setScene(newScene) {
+      this.$emit('update:scene', newScene);
     }
   }
 };

@@ -27,7 +27,8 @@
               <span>Add color to pallette</span>
             </v-tooltip>
 
-            <Pallette v-if="tmpScene.colors.length > 0" v-bind:colors.sync="tmpScene.colors"></Pallette>
+            <Pallette v-if="tmpScene.colors.length > 0" v-bind:colors.sync="tmpScene.colors"
+              @set-candidate="setColorCandidate"></Pallette>
           </div>
 
           <v-card class="brightness-card" flat color="transparent">
@@ -62,6 +63,13 @@
           </v-card>
 
           <v-switch v-model="animated" label="Animated"></v-switch>
+          <v-select
+            :items="animationTypes"
+            v-if="animated"
+            v-model="tmpScene.animation"
+            label="Animation"
+          ></v-select>
+
           <div class="buttons">
             <v-btn @click="submitEdits()" color="primary" class="saveBtn">save</v-btn>
             <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
@@ -132,43 +140,30 @@ import Pallette from "@/components/Pallette";
 
 export default {
   name: "Edit",
-  props: ["dialog", "scene"],
+  props: [
+    "dialog", 
+    "scene",
+    "set-scene"
+  ],
 
   components: {
-    Pallette,
+    Pallette
   },
 
   data: () => ({
-    colorCandidate: "",
-    defaultBrightnessPct: 0
+    animationTypes:       SceneProps.ANIMATION_TYPES,
+    colorCandidate:       "",
+    defaultBrightnessPct: 0,
+    animated:             false
   }),
-
-  computed: {
-    /* defaultBrightnessPct: {
-      get: function() {
-        return this.$brightnessToDisplay(this.tmpScene.defaultBrightness);
-      }
-    }, */
-    animated: {
-      get: function() {
-        return this.scene.functionCall == SceneProps.ANIMATED_FUNCTION;
-      },
-      set: function(val) {
-        this.tmpScene.animated = val;
-
-        if (val) {
-          this.tmpScene.functionCall = SceneProps.ANIMATED_FUNCTION;
-        } else {
-          this.tmpScene.functionCall = SceneProps.STATIC_FUNCTION;
-        }
-      }
-    }
-  },
 
   // Creates the tmpScene object when the Edit component loads; only overwrites on save
   created: function() {
     this.revertTemps();
-    this.defaultBrightnessPct = this.$brightnessToDisplay(this.tmpScene.defaultBrightness);
+    this.animated = this.tmpScene.animated;
+    this.defaultBrightnessPct = this.$brightnessToDisplay(
+      this.tmpScene.defaultBrightness
+    );
   },
 
   methods: {
@@ -185,16 +180,34 @@ export default {
     //  Function to revert tmpScene in the event of re-render or cancel:
     revertTemps() {
       this.tmpScene = Object.assign({}, this.scene);
-      this.colorCandidate = ""
+      this.colorCandidate = "";
+      this.animated = false;
+    },
+
+    setColorCandidate(newCandidate) {
+      console.log(newCandidate);
+      this.colorCandidate = newCandidate;
     },
 
     submitEdits() {
       //  Convert the defaultBrightness property to stored form (so RPi doesn't have to)
-      this.tmpScene.defaultBrightness = 
-        this.$brightnessToStore(this.defaultBrightnessPct);
+      this.tmpScene.defaultBrightness = this.$brightnessToStore(
+        this.defaultBrightnessPct
+      );
+
+      this.tmpScene.animated = this.animated;
+
+      if (this.tmpScene.animated) {
+        this.tmpScene.functionCall = SceneProps.ANIMATED_FUNCTION;
+      } else {
+        this.tmpScene.functionCall = SceneProps.STATIC_FUNCTION;
+      }
+
+      console.log("new tmpScene:");
+      console.log(this.tmpScene);
 
       //   Update the prop passed down from the parent:
-      this.$emit("update:scene", this.tmpScene);      
+      this.$emit("set-scene", this.tmpScene);
 
       //  Submit the edits to the API/Database:
       editScene(this.tmpScene).then(response => {
