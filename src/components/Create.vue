@@ -30,7 +30,8 @@
             <span>Add color to pallette</span>
           </v-tooltip>
 
-          <Pallette v-if="colors.length > 0" v-bind:colors.sync="colors"></Pallette>
+          <Pallette v-if="colors.length > 0" v-bind:colors.sync="colors"
+            @set-candidate="setColorCandidate"></Pallette>
         </div>
 
         <v-card flat color="transparent">
@@ -155,8 +156,10 @@ export default {
 
   methods: {
     addCandidate() {
+      console.log("Pushing ")
+      console.log(this.colorCandidate)
       this.colors.push(this.colorCandidate);
-      this.colorCandidate.$reset;
+      console.log(this.colors)
     },
 
     assignToObj() {
@@ -214,6 +217,10 @@ export default {
 
     rerenderPallette() {
       this.palletteKey += 1;
+    },
+
+    setColorCandidate(event, newCandidate) {
+      this.colorCandidate = newCandidate;
     }
   }
 };

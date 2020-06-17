@@ -7,9 +7,9 @@
         v-bind:key="index"        
         close
         @click:close="removeColor(index)"
+        @click="changePickerValue(chipColor)"
         :color="chipColor"
         draggable
-        @dragend="updateOrder()"
         ripple
       ></v-chip>
     </draggable>
@@ -29,7 +29,10 @@ import draggable from 'vuedraggable';
 
 export default {
   name: "Pallette",
-  props: ["colors"],
+  props: [
+    "colors",
+    "set-candidate"
+  ],
 
   components: {
     draggable,
@@ -39,19 +42,34 @@ export default {
     return {}
   },
 
-  created: function() {
-    this.palletteColors = this.colors;
+  computed: {
+    palletteColors: {
+      get: function () {
+        return this.colors;
+      },
+      set: function (val) {
+        this.updateOrder(val);
+      }
+    }
   },
+
+  /* created: function() {
+    this.palletteColors = this.colors;
+  }, */
   
   methods: {
+    changePickerValue(newCandidate) {
+      this.$emit("set-candidate", newCandidate);
+    },
+
     removeColor(index) {
       let tmpColors = this.colors;
       tmpColors.splice(index, 1);
       this.$emit("update:colors", tmpColors);
     },
 
-    updateOrder() {
-      this.$emit("update:colors", this.palletteColors);
+    updateOrder(newOrder) {      
+      this.$emit("update:colors", newOrder);
     }
   }
 };
