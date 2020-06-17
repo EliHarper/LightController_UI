@@ -23,8 +23,10 @@
     <v-content>
       <component
       v-bind:is="dynamicComponent"
+      v-bind:rememberDevice.sync="rememberDevice"
       class="tab"
-      :getStartedParent="getStarted">
+      :getStartedParent="getStarted"
+      >
       </component>
     </v-content>
   </v-app>
@@ -40,6 +42,7 @@ import Choose from './components/Choose';
 import Create from './components/Create';
 import Scene from './components/Scene';
 import Pallette from './components/Pallette';
+import SceneProps from './scene-properties/index';
 
 
 export default {
@@ -55,16 +58,34 @@ export default {
 
   data() {
     return {
-      dynamicComponent: 'LandingPage'
+      dynamicComponent: SceneProps.LANDINGPAGE,
+      rememberDevice: false
     }
+  },
+
+  mounted() {
+    if (localStorage.rememberDevice) {
+      this.rememberDevice = localStorage.rememberDevice;
+      if (localStorage.rememberDevice == "true") {
+        this.dynamicComponent = SceneProps.CHOOSE
+      } else {
+        this.dynamicComponent = SceneProps.LANDINGPAGE
+      }
+    } 
   },
 
   methods: {
     getStarted: function() {    
-      this.dynamicComponent = 'Choose'    
+      this.persist();
+      this.dynamicComponent = SceneProps.CHOOSE
     },
+
     goHome: function() {
-      this.dynamicComponent = 'LandingPage'
+      this.dynamicComponent = SceneProps.LANDINGPAGE
+    },
+
+    persist: function() {
+      localStorage.rememberDevice = this.rememberDevice;
     }
   }
 };

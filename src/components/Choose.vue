@@ -107,10 +107,8 @@ export default {
 
     deleteItem(scene) {
       deleteScene(scene._id.$oid).then(response => {
-        console.log(response);
         if (response.status == SceneProps.SUCCESS) {
           this.scenes.splice(this.scenes.indexOf(scene), 1);
-          console.log("response.status == SUCCESS");
           this.deleted = scene.name;
           this.deleteSnackbar = true;
         }
@@ -118,7 +116,6 @@ export default {
     },
 
     loadScenes() {
-      console.log("Fetching: ")
       fetchScenes().then(response => {
         this.scenes = JSON.parse(JSON.stringify(response.data));
       }).then(console.log(this.scenes));
