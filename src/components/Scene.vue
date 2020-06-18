@@ -107,8 +107,9 @@ h2 {
 
 
 <script>
-import { applyScene, lightsOff } from "@/api/index.js";
+import { applyScene, lightsOff, editScene } from "@/api/index.js";
 import Edit from "./Edit";
+import SceneProps from "../scene-properties/index";
 
 export default {
   name: "Scene",
@@ -200,7 +201,16 @@ export default {
     },
 
     setScene(newScene) {
-      this.$emit('update:scene', newScene);
+      console.log('setting the scene ;)')
+
+      //  Submit the edits to the API/Database:
+      editScene(newScene).then(response => {
+        if (response.status === SceneProps.SUCCESS) {
+          this.editSnackbar = true;
+          this.$emit('update:scene', newScene);
+          this.loadScenes();
+        }
+      });
     }
   }
 };

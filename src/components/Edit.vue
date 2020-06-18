@@ -134,7 +134,6 @@
 
 
 <script>
-import { editScene } from "@/api/index.js";
 import SceneProps from "@/scene-properties/index.js";
 import Pallette from "@/components/Pallette";
 
@@ -151,10 +150,11 @@ export default {
   },
 
   data: () => ({
+    animated:             false,
     animationTypes:       SceneProps.ANIMATION_TYPES,
     colorCandidate:       "",
     defaultBrightnessPct: 0,
-    animated:             false
+    tmpScene:             {},
   }),
 
   // Creates the tmpScene object when the Edit component loads; only overwrites on save
@@ -185,7 +185,6 @@ export default {
     },
 
     setColorCandidate(newCandidate) {
-      console.log(newCandidate);
       this.colorCandidate = newCandidate;
     },
 
@@ -208,13 +207,6 @@ export default {
 
       //   Update the prop passed down from the parent:
       this.$emit("set-scene", this.tmpScene);
-
-      //  Submit the edits to the API/Database:
-      editScene(this.tmpScene).then(response => {
-        if (response.status === SceneProps.SUCCESS) {
-          this.editSnackbar = true;
-        }
-      });
 
       this.cancel();
     }

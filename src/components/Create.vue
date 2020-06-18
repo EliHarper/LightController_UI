@@ -31,7 +31,7 @@
           </v-tooltip>
 
           <Pallette v-if="colors.length > 0" v-bind:colors.sync="colors"
-            @set-candidate="setColorCandidate"></Pallette>
+            :key="palletteKey" @set-candidate="setColorCandidate"></Pallette>
         </div>
 
         <v-card flat color="transparent">
