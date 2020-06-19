@@ -5,12 +5,12 @@
         <v-text-field
           label="Name"
           v-model="name"
-          :error-messages="searchForErrors"
+          :error-messages="nameErrors"
           @input="$v.name.$touch()"
           @blur="$v.name.$touch()"
           required
         ></v-text-field>
-        <div class="picker">
+        <div class="picker" :error-messages="colorErrors">
           <v-color-picker mode="hexa" hide-mode-switch hide-inputs v-model="colorCandidate"></v-color-picker>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
@@ -30,8 +30,14 @@
             <span>Add color to pallette</span>
           </v-tooltip>
 
-          <Pallette v-if="colors.length > 0" v-bind:colors.sync="colors"
-            :key="palletteKey" @set-candidate="setColorCandidate"></Pallette>
+          <p class="error--text color-error" v-if="needColors">Please select at least one color.</p>
+
+          <Pallette
+            v-if="colors.length > 0"
+            v-bind:colors.sync="colors"
+            :key="palletteKey"
+            @set-candidate="setColorCandidate"
+          ></Pallette>
         </div>
 
         <v-card flat color="transparent">
@@ -64,7 +70,15 @@
         </v-card>
 
         <v-switch v-model="animated" label="Animated"></v-switch>
-        <v-select :items="animationTypes" v-if="animated" v-model="scene.animation" label="Animation"></v-select>
+        <v-select
+          :items="animationTypes"
+          v-if="animated"
+          v-model="animation"
+          label="Animation"
+          :error-messages="animationErrors"
+          @input="$v.animation.$touch()"
+          @blur="$v.animation.$touch()"
+        ></v-select>
 
         <v-btn @click="createScene()" color="primary" class="createBtn">create</v-btn>
         <v-btn @click="cancel()" color="secondary" class="cancelBtn">cancel</v-btn>
@@ -76,6 +90,11 @@
 
 <style scoped>
 @import "../assets/css/style.css";
+
+.color-error {
+  animation-duration: 0.3s;
+  animation-name: shakeError;
+}
 
 .createBtn,
 .cancelBtn {
@@ -109,10 +128,9 @@
 
 <script>
 import { postNewScene } from "@/api/index.js";
-import { required } from "vuelidate/lib/validators";
+import { required, minLength } from "vuelidate/lib/validators";
 import Pallette from "./Pallette";
 import SceneProps from "@/scene-properties/index.js";
-
 
 export default {
   name: "Create",
@@ -123,25 +141,34 @@ export default {
   },
 
   data: () => ({
-    scene:             {},
-    animated:          false,
-    animation:         "",
-    animationTypes:    SceneProps.ANIMATION_TYPES,
-    colorCandidate:    "",
-    colors:            [],
+    scene: {},
+    animated: false,
+    animation: "",
+    animationTypes: SceneProps.ANIMATION_TYPES,
+    colorCandidate: "",
+    colors: [],
     defaultBrightness: 50,
-    name:              "",
-    palletteKey:       0
+    name: "",
+    needColors: false,
+    palletteKey: 0
   }),
 
   validations: {
     name: {
       required
+    },
+    animation: {
+      ifAnimatedSelected(value) {
+        return this.animated && value.length > 0;
+      }
+    },
+    colors: {
+      minLength: minLength(1)
     }
   },
 
   computed: {
-    searchForErrors() {
+    nameErrors() {
       let errors = [];
       if (!this.$v.name.$dirty) {
         return errors;
@@ -150,15 +177,35 @@ export default {
       !this.$v.name.required && errors.push("Name is required.");
 
       return errors;
+    },
+    animationErrors() {
+      let errors = [];
+
+      !this.$v.animation.required &&
+        errors.push("Animation is required if animated is selected.");
+
+      return errors;
+    },
+    colorErrors() {
+      let errors = [];
+
+      if (!this.$v.colors.$dirty) {
+        return errors;
+      }
+
+      !this.$v.colors.minLength &&
+        errors.push("Please select at least one color.");
+
+      return errors;
     }
   },
 
   methods: {
     addCandidate() {
-      console.log("Pushing ")
-      console.log(this.colorCandidate)
+      console.log("Pushing ");
+      console.log(this.colorCandidate);
       this.colors.push(this.colorCandidate);
-      console.log(this.colors)
+      console.log(this.colors);
     },
 
     assignToObj() {
@@ -197,19 +244,49 @@ export default {
       this.$emit("update:dialog", false);
     },
 
-    createScene() {
-      console.log("createScene");
-      if (this.name.length === 0) {
-        console.log("name.length === 0");
-        this.$v.name.$touch();
-        return;
+    /* onSubmit validation functions: */
+    checkAnimations() {
+      if (this.animation.length === 0 && this.animated) {
+        this.$v.animation.$touch();
+        return false;
       }
+      return true;
+    },
+
+    checkColors() {
+      if (this.colors.length === 0) {
+        this.needColors = true;
+        return false;
+      }
+      return true;
+    },
+
+    checkName() {
+      if (this.name.length === 0) {
+        this.$v.name.$touch();
+        return false;
+      }
+      return true;
+    },
+
+    onSubmitValidationsPassed() {
+      if(this.checkName() && this.checkAnimations() && this.checkColors()) {
+        return true;
+      }
+      return false;
+    },
+    /* End onSubmit validation functions */
+
+    createScene() {
+      if (!this.onSubmitValidationsPassed()) {
+        return;
+      } 
 
       this.assignToObj();
-      console.log("finna post");
       postNewScene(this.scene).then(response => {
-        console.log(JSON.stringify(response.data));
-        this.$emit("load-scenes");
+        if (response.status == SceneProps.SUCCESS) {
+          this.$emit("load-scenes");
+        }
       });
 
       this.cancel();
@@ -220,7 +297,6 @@ export default {
     },
 
     setColorCandidate(newCandidate) {
-      console.log(newCandidate)
       this.colorCandidate = newCandidate;
     }
   }

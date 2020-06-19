@@ -21,7 +21,7 @@
         </div>
 
         <div class="remember d-flex justify-center">
-          <v-checkbox v-model="remember" color="primary" label="Remember me on this device"></v-checkbox>
+          <v-checkbox v-model="remember" color="primary" label="Don't make me say it again"></v-checkbox>
         </div>
       </v-col>
     </v-row>
