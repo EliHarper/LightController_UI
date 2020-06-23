@@ -1,8 +1,11 @@
 FROM debian:latest
 
 # Install npm in order to obtain Vue & dependencies:
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - ; \
-    apt-get install -y nodejs
+RUN apt update && apt upgrade ; \
+    apt install -y apt-utils curl && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - ; \
+    apt-get install -y nodejs npm && \
+    npm i npm@latest -g
 
 # Install simple http server for serving static content:
 RUN npm install -g http-server
@@ -12,6 +15,9 @@ WORKDIR /app
 
 # Copy 'package.json' and 'package-lock.json' (if available):
 COPY package*.json ./
+
+# Copy environment variables in:
+# COPY .env ./
 
 # Install project dependencies:
 RUN npm install
@@ -26,4 +32,4 @@ RUN npm run build
 EXPOSE 8080
 
 # Run itt:
-CMD ['http-server', 'dist']
+CMD ["http-server", "dist"]
