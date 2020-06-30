@@ -25,11 +25,8 @@ RUN npm install
 # Copy project files and folders to the current workdir:
 COPY . .
 
-# Build the app for 'production' with minification:
-RUN npm run build
-
 # For port binding, TBD around runtime, but container port will never change:
 EXPOSE 8080
 
-# Run itt:
-CMD ["http-server", "dist"]
+# Aight, run itt:
+CMD ["npm", "run", "serve"]
