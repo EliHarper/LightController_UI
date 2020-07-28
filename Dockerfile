@@ -16,17 +16,17 @@ WORKDIR /app
 # Copy 'package.json' and 'package-lock.json' (if available):
 COPY package*.json ./
 
-# Copy environment variables in:
-# COPY .env ./
-
 # Install project dependencies:
 RUN npm install
 
 # Copy project files and folders to the current workdir:
 COPY . .
 
+#Build the app for production with minification:
+RUN npm run build
+
 # For port binding, TBD around runtime, but container port will never change:
 EXPOSE 8080
 
 # Aight, run itt:
-CMD ["npm", "run", "serve"]
+CMD ["http-server", "dist"]

@@ -5,9 +5,6 @@ services:
         image: eliharper/lights_ui:latest
         ports: 
             - "8080:8080"
-        labels:
-            kompose.service.expose: "true"
-            kompose.service.type: nodeport
 
     api:
         image: eliharper/lights_api:latest

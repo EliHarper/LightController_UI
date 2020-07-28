@@ -53,10 +53,6 @@ export default {
       }
     }
   },
-
-  /* created: function() {
-    this.palletteColors = this.colors;
-  }, */
   
   methods: {
     changePickerValue(newCandidate) {
