@@ -23,6 +23,10 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.pallette {  
+  width: 100%;
+}
 </style>
 
 <script>
@@ -53,10 +57,6 @@ export default {
       }
     }
   },
-
-  /* created: function() {
-    this.palletteColors = this.colors;
-  }, */
   
   methods: {
     changePickerValue(newCandidate) {
