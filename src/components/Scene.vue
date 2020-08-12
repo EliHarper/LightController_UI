@@ -15,14 +15,14 @@
             <ul>
               <li>Colors: {{scene.colors}}</li>
               <li>Function Call: {{scene.functionCall}}</li>
-              <li>Animation: {{scene.animation}}
+              <li v-if="scene.animation">Animation: {{scene.animation}}
               <li>Default brightness: {{scene.defaultBrightness | brightnessAsPercent }}</li>
             </ul>
           </div>
 
           <div v-if="isActive" class="off">
             <v-btn @click="turnOff()">Turn off</v-btn>
-          </div>
+          </div>          
 
           <div class="icon-container">
             <v-tooltip left>
@@ -43,9 +43,23 @@
               <span>Delete {{scene.name}}</span>
             </v-tooltip>
           </div>
+
         </v-card-text>
-      </v-card>
+      </v-card>      
     </transition>
+
+    <div v-if="isActive" class="brightness">
+      <v-subheader>Brightness</v-subheader>
+      <v-slider
+        v-model="newBrightness"
+        :max="100"
+        :min="0"
+        append-icon="wb_sunny"
+        prepend-icon="wb_iridescent"
+        class="bright-slider"
+        @change="setBrightness"
+        ></v-slider> 
+    </div>
 
     <Edit
       v-bind:dialog.sync="editDialog"
@@ -66,6 +80,15 @@
 
 <style scoped>
 @import "../assets/css/style.css";
+
+.brightness {  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  
+  height: fit-content;
+  width: 100%;
+  z-index: -1;
+}
 
 .Edit {
   width: 100%;
@@ -107,7 +130,7 @@ h2 {
 
 
 <script>
-import { applyScene, lightsOff, editScene } from "@/api/index.js";
+import { applyScene, lightsOff, editScene, updateBrightness } from "@/api/index.js";
 import Edit from "./Edit";
 import SceneProps from "../scene-properties/index";
 
@@ -131,7 +154,9 @@ export default {
       /* editKey allows a forced re-render when the drawer is reopened (so it
           doesn't keep any unsaved changes) */
       editKey: 0,
-      editDialog: false
+      editDialog: false,
+      updatedBrightness: false,
+      newBrightness: 50
     };
   },
 
@@ -157,9 +182,16 @@ export default {
     }
   },
 
+  mounted: function() {
+    this.$nextTick(function () {
+      this.newBrightness = this.scene.defaultBrightness;
+    })
+  },
+
   methods: {
     apply() {
       applyScene(this.scene._id.$oid);      
+      console.log(this.scene)
       this.$emit('update:activeScene', this.scene._id.$oid);
     },
 
@@ -198,6 +230,11 @@ export default {
       const res = lightsOff(this.scene._id.$oid);
       console.log(res)
       this.$emit('update:activeScene', '');
+    },
+
+    setBrightness() {
+      updateBrightness(Math.round(this.$options.filters.brightnessToStore(this.newBrightness)))
+      this.updatedBrightness = true;
     },
 
     setScene(newScene) {

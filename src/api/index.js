@@ -27,3 +27,8 @@ export function lightsOff() {
 export function postNewScene(scene) {
     return axios.post(`${API_URL}/scene/create`, scene);
 }
+
+export function updateBrightness(newBrightness) {
+    console.log('calling /brightness/' + String(newBrightness))
+    return axios.get(`${API_URL}/brightness/${newBrightness}`)
+}

@@ -23,6 +23,9 @@ Vue.filter('brightnessAsPercent', function (byteVal) {
     return ((byteVal / 255) * 100).toFixed() + "%";
 })
 
+Vue.filter('brightnessToStore', function (pctVal) {
+    return ((pctVal / 100) * 255)
+})
 
 new Vue({
     vuetify,
