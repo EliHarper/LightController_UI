@@ -184,7 +184,7 @@ export default {
 
   mounted: function() {
     this.$nextTick(function () {
-      this.newBrightness = this.scene.defaultBrightness;
+      this.newBrightness = this.$options.filters.brightnessAsPercent(this.scene.defaultBrightness);
     })
   },
 
