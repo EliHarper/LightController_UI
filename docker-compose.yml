@@ -1,19 +1,12 @@
 version: '3.0'
 
 services:
-    web:        
-        image: eliharper/lights_ui:latest
+    web:
+        image: localhost:5000/lights_ui
         ports: 
-            - "8080:8080"
-        labels:
-            kompose.service.expose: "true"
-            kompose.service.type: nodeport
+            - "8085:8080"
     api:
-        image: eliharper/lights_api:latest
+        image: localhost:5000/lights_api
         ports:
             - "5001:5000"
-    db:
-        image: mongo:latest
-        ports: 
-            - "27017:27017"
     
