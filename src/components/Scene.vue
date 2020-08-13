@@ -186,7 +186,7 @@ export default {
     this.$nextTick(function () {
       console.log('mounted; pre-conversion brightness:')
       console.log(this.scene.defaultBrightness)
-      this.newBrightness = this.$options.filters.brightnessAsPercent(this.scene.defaultBrightness);
+      this.newBrightness = this.$options.filters.brightnessToDisplay(this.scene.defaultBrightness);
       console.log('post-conversion brightness:')
       console.log(this.newBrightness)
     })
