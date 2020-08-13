@@ -187,7 +187,8 @@ export default {
       console.log('mounted; pre-conversion brightness:')
       console.log(this.scene.defaultBrightness)
       this.newBrightness = this.$options.filters.brightnessAsPercent(this.scene.defaultBrightness);
-      console.log('post-conversion brightness')
+      console.log('post-conversion brightness:')
+      console.log(this.newBrightness)
     })
   },
 
