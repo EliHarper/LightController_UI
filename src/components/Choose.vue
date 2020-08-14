@@ -7,7 +7,7 @@
         v-for="scene in scenes"
         v-bind:key="scene.id"
         v-bind:scene.sync="scene"
-        v-bind:activeScene.sync="activeScene"
+        v-bind:activeScene.sync="activeScene"        
         @load-scenes="loadScenes"
         @delete-item="deleteItem"
       ></Scene>
@@ -23,6 +23,7 @@
       <Create
         v-show="dialog"
         v-bind:dialog.sync="dialog"
+        v-bind:scenes.sync="scenes"
         :key="createKey"  
         @load-scenes="loadScenes">
       </Create>
@@ -68,7 +69,7 @@ v-btn {
 <script>
 import Scene from "./Scene";
 import Create from "./Create";
-import { fetchScenes, deleteScene } from "@/api/index.js";
+import { fetchScenes, deleteScene, putIndices } from "@/api/index.js";
 import SceneProps from "../scene-properties/index";
 
 
@@ -115,10 +116,27 @@ export default {
       });
     },
 
-    loadScenes() {
-      fetchScenes().then(response => {
+    checkIndices() {
+      let scenesWithUpdatedIndices = [];
+      Array.prototype.forEach.call(this.scenes, element => {
+        let index = this.scenes.indexOf(element);
+        if ((!element.index && element.index !== 0) || index !== element.index) { 
+          element.index = index;
+          scenesWithUpdatedIndices.push(element);
+        }
+      });
+
+      if (scenesWithUpdatedIndices.length > 0) {
+        putIndices(scenesWithUpdatedIndices).then(console.log(`putIndices: ${JSON.stringify(scenesWithUpdatedIndices)}`));
+      }
+    },
+
+    async loadScenes() {
+      await fetchScenes().then(response => {
         this.scenes = JSON.parse(JSON.stringify(response.data));
-      }).then(console.log(this.scenes));
+      }).then(console.log(this.scenes))
+      
+      this.checkIndices();
     },
 
     rerenderCreate() {

@@ -134,7 +134,10 @@ import SceneProps from "@/scene-properties/index.js";
 
 export default {
   name: "Create",
-  props: ["dialog"],
+  props: [
+    "dialog",
+    "scenes"
+    ],
 
   components: {
     Pallette
@@ -150,6 +153,7 @@ export default {
     defaultBrightness: 50,
     name: "",
     needColors: false,
+    index: -1,
     palletteKey: 0
   }),
 
@@ -216,14 +220,13 @@ export default {
         functionCallVar = SceneProps.STATIC_FUNCTION;
       }
 
-      console.log("this.animation");
-      console.log(this.animation);
 
       this.scene = Object.assign({}, this.scene, {
         name: this.name,
         colors: this.colors,
         defaultBrightness: (this.defaultBrightness / 100) * 255,
         functionCall: functionCallVar,
+        index: this.scenes.length - 1,
         animated: this.animated,
         animation: this.animation
       });

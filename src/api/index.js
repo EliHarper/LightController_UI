@@ -20,7 +20,6 @@ export function fetchScenes() {
 }
 
 export function lightsOff() {
-    console.log('calling /off:')
     return axios.get(`${API_URL}/off`);
 }
 
@@ -29,6 +28,10 @@ export function postNewScene(scene) {
 }
 
 export function updateBrightness(newBrightness) {
-    console.log('calling /brightness/' + String(newBrightness))
     return axios.get(`${API_URL}/brightness/${newBrightness}`)
+}
+
+export function putIndices(scenes) {
+    console.log('calling /indices/edit:')
+    return axios.put(`${API_URL}/indices/edit`, scenes);
 }
