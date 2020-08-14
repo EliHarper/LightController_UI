@@ -1,16 +1,20 @@
 <template>
   <v-container style="display: flex; justify-content: center;">
     <div id="container" class="pa-0">
-      <!-- v-bind:scene.sync="scene" makes it so the "Scene" component can 
-            update the scene variable we're passing here: -->
-      <Scene
-        v-for="scene in scenes"
-        v-bind:key="scene.id"
-        v-bind:scene.sync="scene"
-        v-bind:activeScene.sync="activeScene"        
-        @load-scenes="loadScenes"
-        @delete-item="deleteItem"
-      ></Scene>
+      <draggable class="scenes" v-model="dragScenes" @start="drag=true" @end="drag=false">
+        <!-- v-bind:scene.sync="scene" makes it so the "Scene" component can 
+              update the scene variable we're passing here: -->
+        <Scene
+          v-for="scene in scenes"
+          v-bind:key="scene.index"
+          v-bind:scene.sync="scene"
+          v-bind:activeScene.sync="activeScene"
+          @load-scenes="loadScenes"
+          @delete-item="deleteItem"
+          draggable
+          ripple
+        ></Scene>
+      </draggable>
 
       <v-snackbar 
         v-model="deleteSnackbar"
@@ -67,9 +71,10 @@ v-btn {
 
 
 <script>
-import Scene from "./Scene";
 import Create from "./Create";
+import draggable from 'vuedraggable';
 import { fetchScenes, deleteScene, putIndices } from "@/api/index.js";
+import Scene from "./Scene";
 import SceneProps from "../scene-properties/index";
 
 
@@ -77,8 +82,9 @@ export default {
   name: "Choose",
 
   components: {
+    Create,
+    draggable,
     Scene,
-    Create
   },
 
   data: () => {
@@ -100,6 +106,19 @@ export default {
     this.loadScenes();
   },
 
+  computed: {
+    dragScenes: {
+      get: function() {
+        return this.scenes;
+      },
+      set: async function(val) {
+        await this.updateOrder(val);
+        console.log('new this.scenes:');
+        console.log(JSON.stringify(this.scenes));
+      }
+    }
+  },
+
   methods: {
     createScene() {
       this.rerenderCreate();
@@ -114,6 +133,18 @@ export default {
           this.deleteSnackbar = true;
         }
       });
+    },
+
+    updateOrder(newOrder) {
+      // Set this.scenes to newOrder so the order is retained and checkIndices can be reused without
+      //   adding in an unnecessary optional; the actual indices of those changed will mismatch:
+      console.log('updateOrder; newOrder:')
+      console.log(newOrder)
+      if (this.scenes.length === newOrder.length) {
+        console.log('lengths are the same.')
+        this.scenes = newOrder;
+      }
+      this.checkIndices();
     },
 
     checkIndices() {
@@ -134,8 +165,9 @@ export default {
     async loadScenes() {
       await fetchScenes().then(response => {
         this.scenes = JSON.parse(JSON.stringify(response.data));
-      }).then(console.log(this.scenes))
-      
+      });
+      console.log(this.scenes);
+
       this.checkIndices();
     },
 
