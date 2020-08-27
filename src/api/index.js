@@ -35,3 +35,14 @@ export function putIndices(scenes) {
     console.log('calling /indices/edit:')
     return axios.put(`${API_URL}/indices/edit`, scenes);
 }
+
+
+export function ambilightOn() {
+    console.log('calling \'/ambilight/on\'')
+    return axios.get(`${API_URL}/ambilight/on`)
+}
+
+export function ambilightOff() {
+    console.log('calling /ambilight/off.')
+    return axios.get(`${API_URL}/ambilight/off`)
+}

@@ -1,6 +1,9 @@
 <template>
   <v-container style="display: flex; justify-content: center;">
     <div id="container" class="pa-0">
+      <div class="ambilight">
+        <v-icon @click="toggleAmbilight">settings_brightness</v-icon>
+      </div>
       <draggable class="scenes" v-model="dragScenes" @start="drag=true" @end="drag=false">
         <!-- v-bind:scene.sync="scene" makes it so the "Scene" component can 
               update the scene variable we're passing here: -->
@@ -73,7 +76,7 @@ v-btn {
 <script>
 import Create from "./Create";
 import draggable from 'vuedraggable';
-import { fetchScenes, deleteScene, putIndices } from "@/api/index.js";
+import { fetchScenes, deleteScene, putIndices, ambilightOn, ambilightOff } from "@/api/index.js";
 import Scene from "./Scene";
 import SceneProps from "../scene-properties/index";
 
@@ -177,6 +180,22 @@ export default {
 
     setDialog(event, value) {
       this.dialog = value;
+    },
+
+    toggleAmbilight() {
+      if (localStorage.ambilightOn) {
+        if (localStorage.ambilightOn == "true") {
+          ambilightOff().then(response => {
+            console.log(JSON.stringify(response));
+          });
+          localStorage.ambilightOn = "false";
+        } else {
+          ambilightOn().then(response => {
+            console.log(JSON.stringify(response));
+          });
+          localStorage.ambilightOn = "true";
+        }
+      }
     }
   }
 };
