@@ -184,18 +184,17 @@ export default {
 
   mounted: function() {
     this.$nextTick(function () {
-      console.log('mounted; pre-conversion brightness:')
-      console.log(this.scene.defaultBrightness)
       this.newBrightness = this.$options.filters.brightnessToDisplay(this.scene.defaultBrightness);
-      console.log('post-conversion brightness:')
-      console.log(this.newBrightness)
     })
   },
 
   methods: {
-    apply() {
-      applyScene(this.scene._id.$oid);      
-      console.log(this.scene)
+    apply() {      
+      if (localStorage.ambilightOn == 'true') {
+        this.$emit('toggle-ambilight')
+      }
+      
+      applyScene(this.scene._id.$oid);            
       this.$emit('update:activeScene', this.scene._id.$oid);
     },
 

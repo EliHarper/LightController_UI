@@ -1,9 +1,23 @@
 <template>
   <v-container style="display: flex; justify-content: center;">
     <div id="container" class="pa-0">
-      <div class="ambilight">
-        <v-icon @click="toggleAmbilight">settings_brightness</v-icon>
-      </div>
+
+      <v-container>
+        <div class="ambi-container">
+          <v-card 
+          shaped
+          elevation="6"
+          class="ambi-card">
+            <v-card-title class='ma-0 subby'>Ambilight</v-card-title>          
+            <div class="ambi-icons">
+              <v-icon @click="toggleAmbilight">settings_brightness</v-icon>
+              <v-switch v-model="ambilightOn"></v-switch>
+            </div>                
+          </v-card>
+          <div class="ambi-spacer"></div>
+        </div>
+      </v-container>
+      
       <draggable class="scenes" v-model="dragScenes" @start="drag=true" @end="drag=false">
         <!-- v-bind:scene.sync="scene" makes it so the "Scene" component can 
               update the scene variable we're passing here: -->
@@ -12,8 +26,9 @@
           v-bind:key="scene.index"
           v-bind:scene.sync="scene"
           v-bind:activeScene.sync="activeScene"
-          @load-scenes="loadScenes"
           @delete-item="deleteItem"
+          @load-scenes="loadScenes"
+          @toggle-ambilight="toggleAmbilight"
           draggable
           ripple
         ></Scene>
@@ -67,6 +82,41 @@
   width: 80vw;
 }
 
+.ambi-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-start;  
+  
+}
+
+.ambi-container {
+  display: flex;  
+}
+
+.ambi-icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: max-content;
+  padding-left: 16px;
+}
+
+/* .ambilight-row {
+  display: flex;
+  flex-direction: row;
+  height: min-content;
+} */
+
+.ambi-spacer {
+  flex: 5;
+  width: max-content;
+}
+
+.subby {
+  height: fit-content;
+}
+
 v-btn {
   justify-self: right;
 }
@@ -92,7 +142,7 @@ export default {
 
   data: () => {
     return {
-      activeScene: '',
+      activeScene: '',      
       createKey: 0,
       palletteKey: 0,
       deleteSnackbar: false,
@@ -119,6 +169,14 @@ export default {
         console.log('new this.scenes:');
         console.log(JSON.stringify(this.scenes));
       }
+    },
+    ambilightOn: {
+      get: function() {
+        return localStorage.ambilightOn == 'true';
+      },
+      set: function() {
+        this.toggleAmbilight();
+      }
     }
   },
 
@@ -141,8 +199,6 @@ export default {
     updateOrder(newOrder) {
       // Set this.scenes to newOrder so the order is retained and checkIndices can be reused without
       //   adding in an unnecessary optional; the actual indices of those changed will mismatch:
-      console.log('updateOrder; newOrder:')
-      console.log(newOrder)
       if (this.scenes.length === newOrder.length) {
         console.log('lengths are the same.')
         this.scenes = newOrder;
@@ -189,13 +245,13 @@ export default {
             console.log(JSON.stringify(response));
           });
           localStorage.ambilightOn = "false";
-        } else {
-          ambilightOn().then(response => {
-            console.log(JSON.stringify(response));
-          });
-          localStorage.ambilightOn = "true";
-        }
+          return;
+        }                 
       }
+      ambilightOn().then(response => {
+          console.log(JSON.stringify(response));
+      });
+      localStorage.ambilightOn = "true";     
     }
   }
 };

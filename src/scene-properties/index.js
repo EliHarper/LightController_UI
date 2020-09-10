@@ -1,6 +1,6 @@
 const SUCCESS           = 200;
 const ANIMATED_FUNCTION = "animated";
-const ANIMATION_TYPES   = ["Projectile", "Breathe", "Twinkle", "Fade"];
+const ANIMATION_TYPES   = ["Projectile", "Breathe", "Twinkle", "Fade", "Meiosis"];
 const STATIC_FUNCTION   = "paint_static_colors";
 
 const CHOOSE            = "Choose"
