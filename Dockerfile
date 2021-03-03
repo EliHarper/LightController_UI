@@ -19,11 +19,12 @@ COPY package*.json ./
 # Install project dependencies:
 RUN npm install
 
-# Copy project files and folders to the current workdir:
-COPY . .
+# Just run 'npm run build' on the host prior to build; then this will copy it in, making it more lightweight
+#   AND less prone to problems:x
+COPY 'dist' .
 
 #Build the app for production with minification:
-RUN npm run build
+# RUN npm run build
 
 # For port binding, TBD around runtime, but container port will never change:
 EXPOSE 8080
